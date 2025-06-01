@@ -8,6 +8,10 @@ OBJS = $(SRC:.c=.o)
 
 all: $(NAME)
 #hello
+
+#nbasn
+
+
 # add relink rule for the header
 $(NAME): $(OBJS) $(LIBFT)
 	$(CC) $(CFLAGS) -o $(NAME) $(OBJS) $(INCLUDE)
