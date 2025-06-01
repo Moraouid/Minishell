@@ -7,7 +7,7 @@ SRC = minishell.c parsing.c excution.c
 OBJS = $(SRC:.c=.o)
 
 all: $(NAME)
-
+# add relink rule for the header
 $(NAME): $(OBJS) $(LIBFT)
 	$(CC) $(CFLAGS) -o $(NAME) $(OBJS) $(INCLUDE)
 
