@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: sel-abbo <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 00:12:49 by sel-abbo          #+#    #+#             */
-/*   Updated: 2025/05/22 23:17:58 by sel-abbo         ###   ########.fr       */
+/*   Updated: 2025/06/07 00:43:34 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,20 @@
 
 int	main(int ac, char **av, char **env)
 {
-	t_read_line read;
+	t_shell	shell;
 
 	(void)ac;
 	(void)av;
 	(void)env;
 	while (1337)
 	{
-		read.read_line = readline("sshell->");
-		add_history(read.read_line);
-		parsing_command(&read);
+		shell.r_line = readline("sshell->");
+		if(shell.r_line == NULL)
+			exit(0);
+		if(ft_strlen(shell.r_line) != 0)
+		{
+			add_history(shell.r_line);
+			parsing_command(&shell);
+		}
 	}
 }

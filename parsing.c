@@ -12,63 +12,58 @@
 
 #include "minishell.h"
 
+t_redir		*creat_node_red(char *value, char *target, int	type)
+{
+	t_redir	*t_red;
+
+	t_red = malloc(sizeof(t_red));
+	if(!t_red)
+		return(NULL);
+	t_red->content = value;
+	t_red->target = target;
+	t_red->type = type;
+	t_red->next = NULL;
+	return (t_red);
+}
+
+t_command	*creat_node_cmd(char **value, t_redir *red)
+{
+	t_command	*t_cmd;
+
+	t_cmd = malloc(sizeof(t_command));
+	if (!t_cmd)
+		return (NULL);
+	t_cmd->args = value;
+	t_cmd->redirs = red;
+	t_cmd->next = NULL;
+	return (t_cmd);
+}
 
 // handel quotes
-char **command_line(char *read_l)
+t_command	*command_line(t_shell *shell)
 {
-	char **cmd = malloc(sizeof(char *) * 100);
-	if (!cmd)
-		return NULL;
-	int i = 0;
-	int k = 0;
-	int j;
-	while (read_l[i])
+	int i;
+	t_redir *red;
+
+	i = 0;
+	while(shell->r_line[i])
 	{
-		while (read_l[i] == ' ')
-			i++;
-		if (!read_l[i])
-			break;
-		cmd[k] = malloc(100);
-		if (!cmd[k])
-			return NULL;
-		j = 0;
-		if (read_l[i] == '"')
+		if(shell->r_line[i] == '<')
 		{
-			i++;
-			while (read_l[i] && read_l[i] != '"')
-				cmd[k][j++] = read_l[i++];
-			if (read_l[i] == '"')
-				i++;
+			if(shell->r_line[i] == '<')
+			red = creat_node_red("<<", )
 		}
-		else
-		{
-			while (read_l[i] && read_l[i] != ' ' && read_l[i] != '"')
-				cmd[k][j++] = read_l[i++];
-		}
-		cmd[k][j] = '\0';
-		k++;
+
 	}
-	cmd[k] = NULL;
-	return cmd;
+
 }
 
 
 //	this function for parssing 
-void	parsing_command(t_read_line *read)
+void	parsing_command(t_shell *shell)
 {
-	if(read->read_line == NULL)
-		exit(0);
-	if (ft_strlen(read->read_line) == 0)
-		return ;
-	while (*read->read_line == ' ')
-		read->read_line++;
-	read->arg_split = command_line(read->read_line);
-	// read->arg_split = ft_split(read->read_line, ' ');
-	int  i = 0;
-	while(read->arg_split[i])
-	{
-		printf("%s\n", read->arg_split[i]);
-		i++;
-	}
-	command_execution(read);
+	while (*shell->r_line== ' ')
+		shell->r_line++;
+	
+	// command_execution(read);
 }

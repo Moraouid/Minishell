@@ -1,6 +1,35 @@
-gha bdit hhhhh
+in this function
+t_command	*command_line(t_shell *shell)
+hbasst hna "red = creat_node_red("<<", )"
+tanqad liha split or something 
 
-bdit tnhandli lquotes
 
 
-test
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+free palestine
