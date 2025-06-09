@@ -1,5 +1,5 @@
 NAME = minishell
-CC = cc
+CC = cc -g
 CFLAGS = -Wall -Wextra -Werror
 LIBFT = libft/libft.a
 INCLUDE = -I/usr/include/readline -lreadline $(LIBFT) 

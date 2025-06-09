@@ -6,6 +6,10 @@ tanqad liha split or something
 
 
 
+add enum;
+creat new struct for tokenization;
+init struct            ^           ;
+try  tokenization in this "command_line(t_shell *shell)";
 
 
 
