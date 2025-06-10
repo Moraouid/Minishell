@@ -10,24 +10,15 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "libft/libft.h"
 #include "minishell.h"
 
 void	shell_init(t_shell *shell)
 {
 	shell->r_line = NULL;
-	shell->token = NULL;
+	shell->tokens = NULL;
 	shell->cmd = NULL;
 	shell->red = NULL;
-}
-void free_token_list(t_token *head) {
-    t_token *tmp;
-
-    while (head != NULL) {
-        tmp = head;
-        head = head->next;
-        free(tmp->cmd);
-        free(tmp);
-    }
 }
 
 int	main(int ac, char **av, char **env)
@@ -41,13 +32,19 @@ int	main(int ac, char **av, char **env)
 	{
 		shell_init(&shell);
 		shell.r_line = readline("sshell->");
-		if(shell.r_line == NULL)
+		if (shell.r_line == NULL)
 			exit(0);
-		if(ft_strlen(shell.r_line) != 0)
+		if (ft_strlen(shell.r_line) != 0)
 		{
+			printf("%s", shell.r_line);
+			if (!strcmp(shell.r_line, "!"))
+			{
+				free_tokens(&shell);
+				exit(0);
+			}
 			add_history(shell.r_line);
 			parsing_command(&shell);
-			free_token_list(shell.token);
+			free_tokens(&shell);
 		}
 	}
 }

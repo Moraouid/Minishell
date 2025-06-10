@@ -6,29 +6,46 @@
 /*   By: sel-abbo <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 00:14:06 by sel-abbo          #+#    #+#             */
-/*   Updated: 2025/06/09 20:50:56 by sel-abbo         ###   ########.fr       */
+/*   Updated: 2025/06/10 22:12:57 by zatais           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
-
+# include <stdio.h>
 # include "libft/libft.h"
 # include <readline/history.h>
 # include <readline/readline.h>
-# include <stdio.h>
+
 # include <unistd.h>
 
-typedef enum e_type {
+// to handel quotes 
+typedef enum e_token_status
+{
+	DEFAULT,
+	SQUOTE,
+	DQUOTE
+}					t_token_status;
+
+typedef enum e_token_type
+{
 	WORD,
 	PIPE,
-	RED_IN,
-	RED_OUT,
-	HERDOC,
+	INPUT,
+	OUTPUT,
+	HEREDOC,
 	APPEND,
-	STRING,
-	TARGET,
-}   t_type;
+	SPACES,
+  END // '\0'
+}					t_token_type;
+
+typedef struct s_token
+{
+	char			*value;
+	t_token_type	type;
+	struct s_token	*next;
+}					t_token;
+
 
 typedef struct s_redir
 {
@@ -45,18 +62,10 @@ typedef struct s_command
 	struct s_command *next;
 } t_command;
 
-typedef struct s_token
-{
-	char    *cmd;
-	t_type  type;
-	struct s_token *next;
-	struct s_token *prev;
-}   t_token;
-
 typedef struct s_shell
 {
 	char		*r_line;
-	t_token     *token;
+	t_token     *tokens;
 	t_command	*cmd;
 	t_redir		*red;
 }	t_shell;
@@ -66,7 +75,7 @@ void    shell_init(t_shell *shell);
 
 /* parsing_command */
 void		parsing_command(t_shell *shell);
-
+void    free_tokens(t_shell *shell);
 /* execution */
 // void		command_execution(t_read_line *read);
 
