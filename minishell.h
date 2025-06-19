@@ -6,7 +6,7 @@
 /*   By: sel-abbo <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 00:14:06 by sel-abbo          #+#    #+#             */
-/*   Updated: 2025/06/10 22:12:57 by zatais           ###   ########.fr       */
+/*   Updated: 2025/06/14 18:28:30 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,12 +20,12 @@
 # include <unistd.h>
 
 // to handel quotes 
-typedef enum e_token_status
-{
-	DEFAULT,
-	SQUOTE,
-	DQUOTE
-}					t_token_status;
+// typedef enum e_token_status
+// {
+// 	DEFAULT,
+// 	SQUOTE,
+// 	DQUOTE
+// }	t_token_status;
 
 typedef enum e_token_type
 {
@@ -36,30 +36,35 @@ typedef enum e_token_type
 	HEREDOC,
 	APPEND,
 	SPACES,
-  END // '\0'
-}					t_token_type;
+	DQUOTE,
+	SQUOTE,
+	END
+}		t_token_type;
 
 typedef struct s_token
 {
 	char			*value;
 	t_token_type	type;
 	struct s_token	*next;
+	struct s_token	*prev;
 }					t_token;
 
 
 typedef struct s_redir
 {
-	int     type;
-	char    *target;
-	char    *content;
+	int     type; // INPUT, OUTPUT, HEREDOC, APPEND
+	char    *target; // file or command to redirect to
+	char    *content; // content for HEREDOC '??'
 	struct s_redir *next;
 } t_redir;
 
+
 typedef struct s_command
 {
-	char    **args;
-	t_redir *redirs;
+	char    **args; // echo -n "hello world"
+	t_redir *redirs; // redirection list
 	struct s_command *next;
+	struct s_command *prev;
 } t_command;
 
 typedef struct s_shell
@@ -69,6 +74,9 @@ typedef struct s_shell
 	t_command	*cmd;
 	t_redir		*red;
 }	t_shell;
+
+
+
 
 void    shell_init(t_shell *shell);
 
