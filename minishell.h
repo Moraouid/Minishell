@@ -3,87 +3,112 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-abbo <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 00:14:06 by sel-abbo          #+#    #+#             */
-/*   Updated: 2025/06/14 18:28:30 by sel-abbo         ###   ########.fr       */
+/*   Updated: 2025/06/30 21:02:32 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
-# include <stdio.h>
 # include "libft/libft.h"
 # include <readline/history.h>
 # include <readline/readline.h>
-
+# include <stdio.h>
 # include <unistd.h>
 
-// to handel quotes 
-// typedef enum e_token_status
-// {
-// 	DEFAULT,
-// 	SQUOTE,
-// 	DQUOTE
-// }	t_token_status;
+/* ---------------enum of token status--------- */
+typedef enum e_token_status
+{
+	DEFAULT,
+	SQUOTE,
+	DQUOTE
+}						t_token_status;
 
+/* ---------------enum of token type----------- */
 typedef enum e_token_type
 {
 	WORD,
 	PIPE,
-	INPUT,
+	INPUT ,
 	OUTPUT,
 	HEREDOC,
 	APPEND,
 	SPACES,
-	DQUOTE,
-	SQUOTE,
 	END
-}		t_token_type;
+}						t_token_type;
 
+/* --------------struct of env----------------- */
+typedef struct s_env
+{
+	char				*value;
+	struct s_env		*next;
+}						t_env;
+
+/* ---------------struct of token-------------- */
 typedef struct s_token
 {
-	char			*value;
-	t_token_type	type;
-	struct s_token	*next;
-	struct s_token	*prev;
-}					t_token;
+	char				*value;
+	t_token_type		type;
+	struct s_token		*next;
+	struct s_token		*prev;
+}						t_token;
 
-
+/* ---------------struct of redirction----------- */
 typedef struct s_redir
 {
-	int     type; // INPUT, OUTPUT, HEREDOC, APPEND
-	char    *target; // file or command to redirect to
-	char    *content; // content for HEREDOC '??'
-	struct s_redir *next;
-} t_redir;
+	int					type;
+	char				*target;
+	char				*content;
+	struct s_redir		*next;
+}						t_redir;
 
-
+/* ---------------struct of command------------- */
 typedef struct s_command
 {
-	char    **args; // echo -n "hello world"
-	t_redir *redirs; // redirection list
-	struct s_command *next;
-	struct s_command *prev;
-} t_command;
+	char				**args;
+	t_redir				*redirs;
+	struct s_command	*next;
+	struct s_command	*prev;
+}						t_command;
 
+/* ---------------struct of shell-------------- */
 typedef struct s_shell
 {
-	char		*r_line;
-	t_token     *tokens;
-	t_command	*cmd;
-	t_redir		*red;
-}	t_shell;
+	char				*r_line;
+	char				*joined_line;
+	char				**envp;
+	t_token				*tokens;
+	t_command			*cmd;
+	t_redir				*red;
+	t_env				*env;
+}						t_shell;
 
+void					shell_init(t_shell *shell);
 
+/* -----------------parsing_funcion--------------- */
+int						is_space(char c);
+int						is_operator(char *str, int i);
+int						is_separator(char *str, int i);
+int						identify_type(char *str, int i);
+int						check_syntax_error(char *r_line);
+int						copy_env(char **envp, t_env **env);
+char					*allocate_word(char *r_line, int *i);
+void					expansions(t_shell *shell);
+void					free_tokens(t_shell *shell);
+void					free_tokens(t_shell *shell);
+void					tokeniziation(t_shell *shell);
+void					parsing_command(t_shell *shell);
+void					add_token(t_token **c_line, t_token *new);
+void					add_token(t_token **c_line, t_token *new);
+void					handle_quote_error(t_token_status status);
+void					print_error(char *msg1, char *msg2, int specific);
+t_token					*creat_node_cmd(char *value, int type);
+t_token					*creat_node_cmd(char *value, int type);
+t_command				*split_commands(t_token *tokens);
+t_token_status			update_quote_status(t_token_status status, char c);
 
-
-void    shell_init(t_shell *shell);
-
-
-/* parsing_command */
-void		parsing_command(t_shell *shell);
-void    free_tokens(t_shell *shell);
 /* execution */
 // void		command_execution(t_read_line *read);
 
