@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: sel-abbo <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 00:12:49 by sel-abbo          #+#    #+#             */
-/*   Updated: 2025/07/01 04:15:19 by sel-abbo         ###   ########.fr       */
+/*   Updated: 2025/07/17 22:30:40 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@ void	shell_init(t_shell *shell)
 	shell->r_line = NULL;
 	shell->tokens = NULL;
 	shell->cmd = NULL;
-	shell->red = NULL;
 }
 
 int	main(int ac, char **av, char **env)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: sel-abbo <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 00:14:06 by sel-abbo          #+#    #+#             */
-/*   Updated: 2025/06/30 21:02:32 by sel-abbo         ###   ########.fr       */
+/*   Updated: 2025/07/17 22:28:59 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,17 +60,17 @@ typedef struct s_redir
 {
 	int					type;
 	char				*target;
-	char				*content;
+	char				*h_filename;
 	struct s_redir		*next;
 }						t_redir;
 
 /* ---------------struct of command------------- */
+
 typedef struct s_command
 {
 	char				**args;
 	t_redir				*redirs;
 	struct s_command	*next;
-	struct s_command	*prev;
 }						t_command;
 
 /* ---------------struct of shell-------------- */
@@ -81,8 +81,8 @@ typedef struct s_shell
 	char				**envp;
 	t_token				*tokens;
 	t_command			*cmd;
-	t_redir				*red;
 	t_env				*env;
+	t_env				*s_env;
 }						t_shell;
 
 void					shell_init(t_shell *shell);
@@ -107,7 +107,9 @@ void					print_error(char *msg1, char *msg2, int specific);
 t_token					*creat_node_cmd(char *value, int type);
 t_token					*creat_node_cmd(char *value, int type);
 t_command				*split_commands(t_token *tokens);
+void creat_command(t_shell *shell);
 t_token_status			update_quote_status(t_token_status status, char c);
+t_command	*split_commands(t_token *tokens);
 
 /* execution */
 // void		command_execution(t_read_line *read);
