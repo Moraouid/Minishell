@@ -31,7 +31,7 @@ typedef enum e_token_type
 {
 	WORD,
 	PIPE,
-	INPUT ,
+	INPUT,
 	OUTPUT,
 	HEREDOC,
 	APPEND,
@@ -107,9 +107,9 @@ void					print_error(char *msg1, char *msg2, int specific);
 t_token					*creat_node_cmd(char *value, int type);
 t_token					*creat_node_cmd(char *value, int type);
 t_command				*split_commands(t_token *tokens);
-void creat_command(t_shell *shell);
+void					creat_command(t_shell *shell);
 t_token_status			update_quote_status(t_token_status status, char c);
-t_command	*split_commands(t_token *tokens);
+t_command				*split_commands(t_token *tokens);
 
 /* execution */
 // void		command_execution(t_read_line *read);
