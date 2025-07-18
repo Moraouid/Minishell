@@ -1,0 +1,116 @@
+     1	/* ************************************************************************** */
+     2	/*                                                                            */
+     3	/*                                                        :::      ::::::::   */
+     4	/*   minishell.h                                        :+:      :+:    :+:   */
+     5	/*                                                    +:+ +:+         +:+     */
+     6	/*   By: sel-abbo <marvin@42.fr>                    +#+  +:+       +#+        */
+     7	/*                                                +#+#+#+#+#+   +#+           */
+     8	/*   Created: 2025/05/22 00:14:06 by sel-abbo          #+#    #+#             */
+     9	/*   Updated: 2025/07/18 22:11:58 by sel-abbo         ###   ########.fr       */
+    10	/*                                                                            */
+    11	/* ************************************************************************** */
+    12	
+    13	#ifndef MINISHELL_H
+    14	# define MINISHELL_H
+    15	# include "libft/libft.h"
+    16	# include <readline/history.h>
+    17	# include <readline/readline.h>
+    18	# include <stdio.h>
+    19	# include <unistd.h>
+    20	
+    21	/* ---------------enum of token status--------- */
+    22	typedef enum e_token_status
+    23	{
+    24		DEFAULT,
+    25		SQUOTE,
+    26		DQUOTE
+    27	}						t_token_status;
+    28	
+    29	/* ---------------enum of token type----------- */
+    30	typedef enum e_token_type
+    31	{
+    32		WORD,
+    33		PIPE,
+    34		INPUT,
+    35		OUTPUT,
+    36		HEREDOC,
+    37		APPEND,
+    38		SPACES,
+    39		END
+    40	}						t_token_type;
+    41	
+    42	/* --------------struct of env----------------- */
+    43	typedef struct s_env
+    44	{
+    45		char				*value;
+    46		struct s_env		*next;
+    47	}						t_env;
+    48	
+    49	/* ---------------struct of token-------------- */
+    50	typedef struct s_token
+    51	{
+    52		char				*value;
+    53		t_token_type		type;
+    54		struct s_token		*next;
+    55	}						t_token;
+    56	
+    57	/* ---------------struct of redirction----------- */
+    58	typedef struct s_redir
+    59	{
+    60		int					type;
+    61		char				*target;
+    62		char				*h_filename;
+    63		struct s_redir		*next;
+    64	}						t_redir;
+    65	
+    66	/* ---------------struct of command------------- */
+    67	
+    68	typedef struct s_command
+    69	{
+    70		char				**args;
+    71		t_redir				*redirs;
+    72		struct s_command	*next;
+    73	}						t_command;
+    74	
+    75	/* ---------------struct of shell-------------- */
+    76	typedef struct s_shell
+    77	{
+    78		char				*r_line;
+    79		char				*joined_line;
+    80		char				**envp;
+    81		t_token				*tokens;
+    82		t_command			*cmd;
+    83		t_env				*env;
+    84		t_env				*s_env;
+    85	}						t_shell;
+    86	
+    87	void					shell_init(t_shell *shell);
+    88	
+    89	/* -----------------parsing_funcion--------------- */
+    90	int						is_space(char c);
+    91	int						is_operator(char *str, int i);
+    92	int						is_separator(char *str, int i);
+    93	int						identify_type(char *str, int i);
+    94	int						check_syntax_error(char *r_line);
+    95	int						copy_env(char **envp, t_env **env);
+    96	char					*allocate_word(char *r_line, int *i);
+    97	void					expansions(t_shell *shell);
+    98	void					free_tokens(t_shell *shell);
+    99	void					free_tokens(t_shell *shell);
+   100	void					tokeniziation(t_shell *shell);
+   101	void					parsing_command(t_shell *shell);
+   102	void					add_token(t_token **c_line, t_token *new);
+   103	void					add_token(t_token **c_line, t_token *new);
+   104	void					handle_quote_error(t_token_status status);
+   105	void					print_error(char *msg1, char *msg2, int specific);
+   106	t_token					*creat_node_cmd(char *value, int type);
+   107	t_token					*creat_node_cmd(char *value, int type);
+   108	t_command				*split_commands(t_token *tokens);
+   109	void					creat_command(t_shell *shell);
+   110	t_token_status			update_quote_status(t_token_status status, char c);
+   111	t_command				*split_commands(t_token *tokens);
+   112	
+   113	/* execution */
+   114	// void		command_execution(t_read_line *read);
+   115	
+   116	#endif

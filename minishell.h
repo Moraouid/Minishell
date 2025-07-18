@@ -6,7 +6,7 @@
 /*   By: sel-abbo <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 00:14:06 by sel-abbo          #+#    #+#             */
-/*   Updated: 2025/07/17 22:28:59 by sel-abbo         ###   ########.fr       */
+/*   Updated: 2025/07/18 22:11:58 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,6 @@ typedef struct s_token
 	char				*value;
 	t_token_type		type;
 	struct s_token		*next;
-	struct s_token		*prev;
 }						t_token;
 
 /* ---------------struct of redirction----------- */

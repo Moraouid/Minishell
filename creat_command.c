@@ -6,15 +6,11 @@
 /*   By: sel-abbo <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/05 21:51:17 by sel-abbo          #+#    #+#             */
-/*   Updated: 2025/07/18 05:34:14 by sel-abbo         ###   ########.fr       */
+/*   Updated: 2025/07/19 00:14:37 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include <readline/readline.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
 
 t_redir *creat_node_redirction(t_token_type type, char *target)
 {
@@ -50,13 +46,13 @@ void add_back_redir(t_redir **redir, t_redir *new_redir)
   temp->next = new_redir;
 }
 
-t_command *creat_node_cmd(char **args, t_redir *redirs)
+t_command *creat_cmd(char **args, t_redir *redirs)
 {
 	t_command *cmd;
 	
 	cmd = malloc(sizeof(t_command));
 	if(!cmd)
-		return;
+		return NULL;
 	cmd->args = args;
 	cmd->redirs = redirs;
 	cmd->next = NULL;
@@ -90,7 +86,8 @@ void creat_command(t_shell *shell)
 	t_redir *redir;
 	t_redir *n_redir;
 	t_command *n_cmd;
-	char **args;
+	t_token *tmp;
+	char **args = malloc(10000);
 	int i;
 
 	shell->cmd = NULL;
@@ -105,24 +102,26 @@ void creat_command(t_shell *shell)
     		{
 				args[i] = ft_strdup(shell->tokens->value);
 				shell->tokens = shell->tokens->next;
+				tmp = shell->tokens;
 				i++;
     		}
     		while(shell->tokens && isredirction(shell->tokens))
     		{
-				n_redir = creat_node_redirction(shell->tokens->type, shell->tokens->next);
+				n_redir = creat_node_redirction(shell->tokens->type, shell->tokens->next->value);
     			add_back_redir(&redir, n_redir);
 				shell->tokens = shell->tokens->next->next;
+				// tmp = shell->tokens;
     		}
-    		shell->tokens = shell->tokens->next;
+    		// shell->tokens = tmp;cd
     	}
-    	if(shell->tokens && shell->tokens->type == PIPE)
-    	{
-			n_cmd = creat_node_cmd(args, redir);
-			add_back_cmd(&shell->cmd, n_cmd);
-			redir = NULL;
-    	}
-    	shell->tokens = shell->tokens->next;
+		n_cmd = creat_cmd(args, redir);
+		add_back_cmd(&shell->cmd, n_cmd);
+		redir = NULL;
+		if (shell->tokens && shell->tokens->type == PIPE)
+		{
+			shell->tokens = shell->tokens->next;
+			tmp = shell->tokens;
+		}
+    	shell->tokens = tmp;
   }
 }
-
-

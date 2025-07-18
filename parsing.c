@@ -6,7 +6,7 @@
 /*   By: sel-abbo <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/10 21:26:17 by zatais            #+#    #+#             */
-/*   Updated: 2025/07/17 22:30:03 by sel-abbo         ###   ########.fr       */
+/*   Updated: 2025/07/18 23:18:09 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,9 +131,9 @@ void	print_commands(t_command *cmd_list)
 void	parsing_command(t_shell *shell)
 {
 	tokeniziation(shell); 
-	creat_command(shell);
-  	expansions(shell);
+	// expansions(shell);
 	print_tokens(shell);
+	creat_command(shell);
 	printf("\nCommands:\n-----------------\n");
 	print_commands(shell->cmd);
 	

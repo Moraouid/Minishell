@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: sel-abbo <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/24 04:53:27 by sel-abbo          #+#    #+#             */
-/*   Updated: 2025/06/26 19:12:48 by sel-abbo         ###   ########.fr       */
+/*   Updated: 2025/07/18 23:01:10 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@ void	add_token(t_token **c_line, t_token *new)
 	while (last->next != NULL)
 		last = last->next;
 	last->next = new;
-	new->prev = last;
 }
 
 t_token	*creat_node_cmd(char *value, int type)
@@ -40,7 +39,6 @@ t_token	*creat_node_cmd(char *value, int type)
 	t_cmd->value = value;
 	t_cmd->type = type;
 	t_cmd->next = NULL;
-	t_cmd->prev = NULL;
 	return (t_cmd);
 }
 

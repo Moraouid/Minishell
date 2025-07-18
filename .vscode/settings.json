@@ -1,5 +1,7 @@
 {
     "files.associations": {
-        "random": "c"
+        "random": "c",
+        "readline.h": "c",
+        "minishell.h": "c"
     }
 }
