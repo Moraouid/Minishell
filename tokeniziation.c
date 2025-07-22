@@ -6,7 +6,7 @@
 /*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/24 03:57:54 by sel-abbo          #+#    #+#             */
-/*   Updated: 2025/06/30 16:43:32 by sel-abbo         ###   ########.fr       */
+/*   Updated: 2025/07/20 06:29:32 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,19 +87,28 @@ t_token	*handle_word_token(t_shell *shell, int *i)
 	return (n_token);
 }
 
-void	tokeniziation(t_shell *shell)
-{
-	int				i;
-	int				type;
-	t_token			*n_token;
 
-	if(!check_syntax_error(shell->r_line))
-		return ;
+int	tokeniziation(t_shell *shell)
+{
+	int		i;
+	int		type;
+	t_token	*n_token;
+
+	if (!check_quots(shell->r_line))
+		return (0);
 	i = 0;
 	while (shell->r_line[i])
 	{
 		while (shell->r_line[i] && is_space(shell->r_line[i]))
 			i++;
+		if (shell->r_line[i] == '&')
+		{
+			if (shell->r_line[i + 1] == '&')
+				print_error(ERRNO_A, "'&&'");
+			else
+				print_error(ERRNO_A, "'&'");
+			return (0);
+		}
 		if (!shell->r_line[i])
 			break ;
 		type = identify_type(shell->r_line, i);
@@ -109,4 +118,5 @@ void	tokeniziation(t_shell *shell)
 			n_token = handle_word_token(shell, &i);
 		add_token(&shell->tokens, n_token);
 	}
+	return (1);
 }

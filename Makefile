@@ -3,8 +3,9 @@ CC = cc -g
 CFLAGS = -Wall -Wextra -Werror
 LIBFT = libft/libft.a
 INCLUDE = -I/usr/include/readline -lreadline $(LIBFT) 
-SRC = minishell.c parsing.c tokeniziation.c parsing_utils.c copy_env.c \
-	tokeniziation_help.c expansions.c creat_command.c
+SRC = minishell.c parsing.c syntax_errors.c tokeniziation.c parsing_utils.c copy_env.c \
+	tokeniziation_help.c expansions.c creat_command.c \
+
 OBJS = $(SRC:.c=.o)
 
 all: $(NAME)

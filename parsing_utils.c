@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   parsing_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-abbo <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/24 04:53:27 by sel-abbo          #+#    #+#             */
 /*   Updated: 2025/07/18 23:01:10 by sel-abbo         ###   ########.fr       */
@@ -58,18 +58,4 @@ void	free_tokens(t_shell *shell)
 	shell->tokens = NULL;
 }
 
-int	check_syntax_error(char *r_line)
-{
-	int	i;
-	t_token_status	status;
-	
-	i = 0;
-	status = DEFAULT;
-	while(r_line[i])
-		status = update_quote_status(status, r_line[i++]);
-	if (status != DEFAULT)
-		return (handle_quote_error(SQUOTE), 0);
-	if (r_line[0] == '|' || r_line[0] == '>' || r_line[0] == '<')
-		return (print_error("syntax error near unexpected token", &r_line[0], 1), 0);
-	return (1);
-}
+
