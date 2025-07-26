@@ -10,8 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft/libft.h"
-#include "minishell.h"
+#include "includes/minishell.h"
 
 void	shell_init(t_shell *shell)
 {
@@ -27,30 +26,18 @@ int	main(int ac, char **av, char **env)
 	(void)ac;
 	(void)av;
 	shell.env = NULL;
-	copy_env(env, &shell.env);
+	copy_env(env, &shell.env, &shell.env_gc);
 	while (1337)
 	{
 		shell_init(&shell);
 		shell.r_line = readline("Niggshell~> ");
 		if (shell.r_line == NULL)
 			exit(0);
-		if (ft_strncmp(shell.r_line, "env", 3) == 0)
-		{
-			t_env *current = shell.env;
-			while (current)
-			{
-				printf("%s\n", current->value);
-				current = current->next;
-			}
-			free(shell.r_line);
-			continue;
-		}
 		if (ft_strlen(shell.r_line) != 0)
 		{
-			// printf("%s\n", shell.r_line);
 			add_history(shell.r_line);
 			parsing_command(&shell);
-			free_tokens(&shell);
+      start_exec(&shell);
 		}
 	}
 }

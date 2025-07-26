@@ -1,28 +1,26 @@
-NAME = minishell
+SRC_DIRS =  parse builtins helper_utils exec
+SRCS =  minishell.c $(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.c))
+OBJS = $(SRCS:.c=.o)
+NAME = minishell_exec
 CC = cc -g
 CFLAGS = -Wall -Wextra -Werror
-LIBFT = libft/libft.a
-INCLUDE = -I/usr/include/readline -lreadline $(LIBFT) 
-SRC = minishell.c parsing.c syntax_errors.c tokeniziation.c parsing_utils.c copy_env.c \
-	tokeniziation_help.c expansions.c creat_command.c \
-
-OBJS = $(SRC:.c=.o)
+LDFLAGS = -lreadline -L/usr/lib
+INCLUDES = -I/usr/include/readline
 
 all: $(NAME)
 
-# add relink rule for the header
-$(NAME): $(OBJS) $(LIBFT)
-	$(CC) $(CFLAGS) -o $(NAME) $(OBJS) $(INCLUDE)
+%.o: %.c exec.h
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
-$(LIBFT):
-	make -C libft
+$(NAME): $(OBJS)
+	$(CC) $(CFLAGS) -o $(NAME) $(OBJS) $(LDFLAGS)
 
 clean:
 	rm -f $(OBJS)
-	make -C libft clean
 
 fclean: clean
 	rm -f $(NAME)
-	make -C libft fclean
 
 re: fclean all
+
+.PHONY: all clean fclean re
