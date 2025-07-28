@@ -99,14 +99,14 @@ void	creat_command(t_shell *shell)
 	t_command	*n_cmd;
 	char		**args;
 	int			i;
-	int			cout;
+	int			count;
 
 	shell->cmd = NULL;
 	redir = NULL;
 	while (shell->tokens)
 	{
-		cout = count_word_list(&shell->tokens);
-		args = gc_malloc(&shell->gc, cout + 1);
+		count = count_word_list(&shell->tokens);
+		args = gc_malloc(&shell->gc, (count + 1) * sizeof(char *));
 		n_cmd = NULL;
 		i = 0;
 		while (shell->tokens && shell->tokens->type != PIPE)

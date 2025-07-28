@@ -12,7 +12,7 @@
 
 #include "../includes/minishell.h"
 
-void	print_error(t_errno ty_errno, char *str)
+void	print_error(t_shell *shell, t_errno ty_errno, char *str)
 {
 	if (ty_errno == ERRNO_DQ || ty_errno == ERRNO_SQ)
 		write(2, "Niggshell: unexpected EOF while loking for matching ", 52);
@@ -20,9 +20,10 @@ void	print_error(t_errno ty_errno, char *str)
 		write(2, "Niggshell: syntax error near unexpected token ", 46);
 	write(2, str, ft_strlen(str));
 	write(2, "\n", 1);
+    shell->last_exit_status = 2;
 }
 
-int	check_quots(char *r_line)
+int	check_quots(t_shell *shell, char *r_line)
 {
 	t_token_status	status;
 	int				i;
@@ -34,15 +35,15 @@ int	check_quots(char *r_line)
 	if (status != DEFAULT)
 	{
 		if (status == DQUOTE)
-			print_error(ERRNO_DQ, "\"");
+			print_error(shell, ERRNO_DQ, "\"");
 		else if (status == SQUOTE)
-			print_error(ERRNO_SQ, "'");
+			print_error(shell, ERRNO_SQ, "'");
 		return (0);
 	}
 	return (1);
 }
 
-int	check_pipe(t_token *token)
+int	check_pipe(t_shell *shell, t_token *token)
 {
 	t_token	*cur;
 
@@ -50,9 +51,9 @@ int	check_pipe(t_token *token)
 	if (token->type == PIPE)
 	{
 		if (token->next && token->next->type == PIPE)
-			print_error(ERRNO_P, "`||'");
+			print_error(shell, ERRNO_P, "`||'");
 		else
-			print_error(ERRNO_P, "`|'");
+			print_error(shell, ERRNO_P, "`|'");
 		return (0);
 	}
 	while (cur)
@@ -60,9 +61,9 @@ int	check_pipe(t_token *token)
 		if (cur->type == PIPE && (cur->next == NULL || cur->next->type == PIPE))
 		{
 			if (cur->next && cur->next->type == PIPE)
-				print_error(ERRNO_P, "`||'");
+				print_error(shell, ERRNO_P, "`||'");
 			else
-				print_error(ERRNO_P, "`|'");
+				print_error(shell, ERRNO_P, "`|'");
 			return (0);
 		}
 		cur = cur->next;
@@ -70,7 +71,7 @@ int	check_pipe(t_token *token)
 	return (1);
 }
 
-int	check_redir(t_token *token)
+int	check_redir(t_shell *shell, t_token *token)
 {
 	t_token	*cur;
 
@@ -80,9 +81,9 @@ int	check_redir(t_token *token)
 		if (isredirction(cur) && (cur->next == NULL || isredirction(cur->next)))
 		{
 			if (cur->next)
-				print_error(ERRNO_RD, cur->next->value);
+				print_error(shell, ERRNO_RD, cur->next->value);
 			else
-				print_error(ERRNO_RD, "'newline'");
+				print_error(shell ,ERRNO_RD, "'newline'");
 			return (0);
 		}
 		cur = cur->next;
@@ -90,11 +91,11 @@ int	check_redir(t_token *token)
 	return (1);
 }
 
-int	check_syntax_error(t_token *token)
+int	check_syntax_error(t_shell *shell, t_token *token)
 {
-	if (!check_pipe(token))
+	if (!check_pipe(shell, token))
 		return (0);
-	if (!check_redir(token))
+	if (!check_redir(shell, token))
 		return (0);
 	return (1);
 }

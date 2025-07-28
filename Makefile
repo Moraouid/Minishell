@@ -1,7 +1,7 @@
 SRC_DIRS =  parse builtins helper_utils exec
 SRCS =  minishell.c $(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.c))
 OBJS = $(SRCS:.c=.o)
-NAME = minishell_exec
+NAME = minishell
 CC = cc -g
 CFLAGS = -Wall -Wextra -Werror
 LDFLAGS = -lreadline -L/usr/lib

@@ -184,7 +184,7 @@ int	update_env_var(t_env *node, char *new_value, t_gc_node **gc)
 	char	*new;
 
 	new = ft_strdup(new_value, gc);
-	gc_remove(gc, node->value);
+	// gc_remove(gc, node->value);
 	node->value = new;
 	return (1);
 }

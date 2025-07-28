@@ -6,7 +6,7 @@
 /*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/10 21:26:17 by zatais            #+#    #+#             */
-/*   Updated: 2025/07/18 23:18:09 by sel-abbo         ###   ########.fr       */
+/*   Updated: 2025/07/26 15:09:49 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,8 @@ void	print_tokens(t_shell *shell)
 			type_str = "APPEND";
 		else if (current->type == SPACES)
 			type_str = "SPACES";
+		else if (current->type == AMBGUS)
+			type_str = "AMBGUS";
 		printf("[%-6s] = %s\n", type_str, current->value);
 		current = current->next;
 	}
@@ -115,15 +117,34 @@ void	print_commands(t_command *cmd)
 	}
 }
 
-void	parsing_command(t_shell *shell)
+void remove_quotes(t_shell *shell)
+{
+    int i;
+    char quote;
+    t_token *current;
+
+    current = shell->tokens;
+    while(current)
+    {
+        
+        current = current->next;
+    }
+}
+
+
+int	parsing_command(t_shell *shell)
 {
 	if (!tokeniziation(shell))
-		return ;
-	if (!check_syntax_error(shell->tokens))
-		return ;
+		return 0;
+	if (!check_syntax_error(shell, shell->tokens))
+		return 0;
 	expansions(shell);
-//	print_tokens(shell);
+    remove_quotes(shell);
+	print_tokens(shell);
 	creat_command(shell);
-///	printf("\nCommands:\n-----------------\n");
-//	print_commands(shell->cmd);
+	// printf("\nCommands:\n-----------------\n");
+	// print_commands(shell->cmd);
+    return 1;
+	printf("\nCommands:\n-----------------\n");
+	print_commands(shell->cmd);
 }

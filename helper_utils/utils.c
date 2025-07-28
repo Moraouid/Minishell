@@ -36,7 +36,7 @@ void	ft_putendl_fd(char *s, int fd)
 
 void	cmd_error(char *cmd, char *arg, char *msg)
 {
-	write(2, "minishell: ", 11);//
+	write(2, "Niggshell: ", 11);
 	write(2, cmd, ft_strlen(cmd));
 	if (arg)
 	{

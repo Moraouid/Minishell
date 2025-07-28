@@ -13,20 +13,18 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-
-
-#include <errno.h>
-#include <fcntl.h>
-#include <limits.h>
-#include <stdio.h>
-#include <readline/readline.h>
-#include <readline/history.h>
-#include <stdlib.h>
-#include <sys/stat.h>
-#include <sys/wait.h>
-#include <unistd.h>
-#include "exec.h"
-#include "parse.h"
+# include <errno.h>
+# include <fcntl.h>
+# include <limits.h>
+# include <readline/history.h>
+# include <readline/readline.h>
+# include <stdio.h>
+# include <stdlib.h>
+# include <sys/stat.h>
+# include <sys/wait.h>
+# include "exec.h"
+# include <unistd.h>
+# include "parse.h"
 
 /* ----------------enum of errno--------------- */
 typedef enum e_errno
@@ -57,8 +55,17 @@ typedef enum e_token_type
 	HEREDOC,
 	APPEND,
 	SPACES,
+	AMBGUS,
 	END
 }						t_token_type;
+
+/* -------------struct of quotes flag---------- */
+typedef struct s_quotes_flag
+{
+	int					sq;
+	int					dq;
+	int					rq;
+}						t_bool_quotes;
 
 /* --------------struct of env----------------- */
 typedef struct s_env
@@ -108,7 +115,6 @@ typedef struct s_gc_node
 	struct s_gc_node	*next;
 }						t_gc_node;
 
-
 /* ---------------struct of shell-------------- */
 typedef struct s_shell
 {
@@ -116,14 +122,16 @@ typedef struct s_shell
 	char				**envp;
 	char				*r_str;
 	char				*joined_line;
+	char				*cwd;
+	int					last_exit_status;
 	t_env				*env;
 	t_env				*s_env;
 	t_token				*tokens;
-	t_command			*cmd;
-	int					last_exit_status;
-	char				*cwd;
 	t_gc_node			*gc;
-  t_gc_node     *env_gc;
+	t_gc_node			*env_gc;
+    int                 stdin_fd;
+    int                 stdout_fd;
+	t_command			*cmd;
 }						t_shell;
 
 #endif

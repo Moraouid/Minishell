@@ -16,7 +16,7 @@ int	is_var_exist(t_env *env, char *var)
 {
 	while (env)
 	{
-		if (!ft_strncmp(env->value, var, sizeof(var)))
+		if (!ft_strncmp(env->value, var, 5))
 			return (1);
 		env = env->next;
 	}
@@ -28,14 +28,15 @@ int	my_env(t_env *env, char **args)
 	t_env	*tmp;
 
 	if (*args)
-		return (cmd_error("env", NULL, "No such file or directory"), 1);
-	if (ft_strcmp(*args, NULL) && !is_var_exist(env, "PATH="))
+		return (cmd_error("env", *args, "No such file or directory"), 1);
+	if (!is_var_exist(env, "PATH=") && !*args)
 		return (cmd_error("env", NULL, "No such file or directory"), 1);
 	while (env)
 	{
-		if (!ft_strcmp(env->value, "_="))
+		if (!ft_strncmp(env->value, "_=", 2))
 		{
 			tmp = env;
+            env = env->next;
 			continue ;
 		}
 		if (ft_strchr(env->value, '='))

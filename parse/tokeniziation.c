@@ -83,21 +83,13 @@ int	tokeniziation(t_shell *shell)
 	int		type;
 	t_token	*n_token;
 
-	if (!check_quots(shell->r_line))
+	if (!check_quots(shell, shell->r_line))
 		return (0);
 	i = 0;
 	while (shell->r_line[i])
 	{
 		while (shell->r_line[i] && is_space(shell->r_line[i]))
 			i++;
-		if (shell->r_line[i] == '&')
-		{
-			if (shell->r_line[i + 1] == '&')
-				print_error(ERRNO_A, "'&&'");
-			else
-				print_error(ERRNO_A, "'&'");
-			return (0);
-		}
 		if (!shell->r_line[i])
 			break ;
 		type = identify_type(shell->r_line, i);

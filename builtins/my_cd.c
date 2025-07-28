@@ -80,7 +80,7 @@ int	update_pwd_vars(t_shell *shell, char *oldpwd, char *new)
 	export_args[0] = oldpwd_arg;
 	export_args[1] = pwd_arg;
 	export_args[2] = NULL;
-	exp_ret = my_export(&shell->env, export_args + 1, &shell->gc);
+	exp_ret = my_export(&shell->env, export_args, &shell->env_gc);
 	return (!exp_ret);
 }
 
@@ -89,7 +89,6 @@ int	update_cwd(t_shell *shell, char *new_path, t_gc_node **gc)
 	char	*new_cwd;
 
 	new_cwd = ft_strdup(new_path, &shell->gc);
-  gc_remove(gc, shell->cwd);
 	shell->cwd = new_cwd;
 	return (1);
 }
@@ -102,14 +101,7 @@ int	my_cd(t_shell *shell, char **args, t_gc_node **gc)
 	char	*new;
 	int		status;
 
-  /// cd in bash version read OLDPWD from the variable
-	oldpwd = getcwd(NULL, 0);
-	if (!oldpwd)
-	{
-		cmd_error("cd", "getcwd", strerror(errno));
-		return (1);
-	}
-	gc_add(&shell->gc, oldpwd);
+	oldpwd = get_env_value(shell->env, "PWD");
 	if (count_arguments(args) > 1)
 	{
 		cmd_error("cd", NULL, "too many arguments");
@@ -130,9 +122,7 @@ int	my_cd(t_shell *shell, char **args, t_gc_node **gc)
 	else
 		gc_add(&shell->gc, new);
 	if (print)
-		write(1, new, ft_strlen(new));
-	if (print)
-		write(1, "\n", 1);
+        ft_putendl_fd(new, 1);
 	status = 0;
 	if (!update_pwd_vars(shell, oldpwd, new))
 		status = 1;

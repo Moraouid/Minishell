@@ -12,25 +12,25 @@
 
 #include "../includes/minishell.h"
 
-int	execute_builtin(t_shell *shell)
+int	execute_builtin(t_shell *shell, t_command *cmd)
 {
 	int	ret;
 
 	ret = 127;
-	if (!ft_strncmp(shell->cmd->args[0], "cd", 3))
-		ret = my_cd(shell, &shell->cmd->args[1], &shell->gc);
-	else if (!ft_strncmp(shell->cmd->args[0], "echo", 5))
-		ret = my_echo(&shell->cmd->args[1]);
-	else if (!ft_strncmp(shell->cmd->args[0], "env", 4))
-		ret = my_env(shell->env, &shell->cmd->args[1]);
-	else if (!ft_strncmp(shell->cmd->args[0], "export", 7))
-		ret = my_export(&shell->env, &shell->cmd->args[1], &shell->gc);
-	else if (!ft_strncmp(shell->cmd->args[0], "pwd", 4))
+	if (!ft_strncmp(cmd->args[0], "cd", 3))
+		ret = my_cd(shell, &cmd->args[1], &shell->gc);
+	else if (!ft_strncmp(cmd->args[0], "echo", 5))
+		ret = my_echo(&cmd->args[1]);
+	else if (!ft_strncmp(cmd->args[0], "env", 4))
+		ret = my_env(shell->env, &cmd->args[1]);
+	else if (!ft_strncmp(cmd->args[0], "export", 7))
+		ret = my_export(&shell->env, &cmd->args[1], &shell->env_gc);
+	else if (!ft_strncmp(cmd->args[0], "pwd", 4))
 		ret = my_pwd(shell);
-	else if (!ft_strncmp(shell->cmd->args[0], "unset", 6))
-		ret = my_unset(&shell->env, &shell->cmd->args[1], &shell->gc);
-	else if (!ft_strncmp(shell->cmd->args[0], "exit", 5))
-		ret = my_exit(&shell->cmd->args[1], shell);
+	else if (!ft_strncmp(cmd->args[0], "unset", 6))
+		ret = my_unset(&shell->env, &cmd->args[1], &shell->env_gc);
+	else if (!ft_strncmp(cmd->args[0], "exit", 5))
+		ret = my_exit(&cmd->args[1], shell);
 	return (ret);
 }
 
@@ -80,7 +80,7 @@ int	open_out(int *fd, char *filename, t_redir *rd)
 			return (0);
 		}
 		dup2(*fd, 1);
-		close(1);
+		close(*fd);
 	}
 	else if (rd->type == APPEND)
 	{
@@ -158,11 +158,9 @@ char	*find_bin(char *arg, t_env *env, t_gc_node **gc, int *f_err)
 	int		i;
 
 	path = get_env_value(env, "PATH");
-	if (!path)
-		return (NULL);
-	if (!*path)
+	if (!path || !*path)
 	{
-		*f_err = 1; // empty path like PATH=;
+		*f_err = 1;
 		return (NULL);
 	}
 	paths = ft_split(path, ':', gc);
@@ -177,8 +175,7 @@ char	*find_bin(char *arg, t_env *env, t_gc_node **gc, int *f_err)
 	return (NULL);
 }
 
-int	is_not_found(t_shell *shell, t_command *cur_cmd, char **full_path,
-		t_gc_node **gc)
+int	is_not_found(t_shell *shell, t_command *cur_cmd, char **full_path)
 {
 	int	err;
 
@@ -186,20 +183,26 @@ int	is_not_found(t_shell *shell, t_command *cur_cmd, char **full_path,
 	if (!*cur_cmd->args[0])
 	{
 		cmd_error(cur_cmd->args[0], NULL, "command not found");
-		gc_clean(gc);
+		gc_clean(&shell->gc);
+		gc_clean(&shell->env_gc);
 		return (1);
 	}
 	if (ft_strchr(cur_cmd->args[0], '/'))
-		*full_path = ft_strdup(cur_cmd->args[0], gc);
+    {
+		*full_path = ft_strdup(cur_cmd->args[0], &shell->gc);
+        err = 1;
+    }
 	else
-		*full_path = find_bin(cur_cmd->args[0], shell->env, gc, &err);
+		*full_path = find_bin(cur_cmd->args[0], shell->env, &shell->gc, &err);
 	if (!*full_path || access(*full_path, F_OK))
 	{
 		if (!err)
 			cmd_error(cur_cmd->args[0], NULL, "command not found");
 		else
 			cmd_error(cur_cmd->args[0], NULL, "No such file or directory");
-		gc_clean(gc);
+		gc_clean(&shell->gc);
+        gc_clean(&shell->env_gc);
+        ///leaks
 		return (1);
 	}
 	return (0);
@@ -214,18 +217,20 @@ int	is_dir(char *full_path)
 	return (0);
 }
 
-int	dir_perm(char *full_path, t_gc_node **gc)
+int	dir_perm(char *full_path, t_shell *shell)
 {
 	if (is_dir(full_path))
 	{
 		cmd_error(full_path, NULL, "is a directory\n");
-		gc_clean(gc);
-		return (1);
+		gc_clean(&shell->gc);
+        gc_clean(&shell->env_gc);
+        return (1);
 	}
 	if (access(full_path, X_OK))
 	{
 		cmd_error(full_path, NULL, "permission denied\n");
-		gc_clean(gc);
+		gc_clean(&shell->gc);
+        gc_clean(&shell->env_gc);
 		return (1);
 	}
 	return (0);
@@ -235,21 +240,20 @@ void	exec_child(t_shell *shell, t_command *cur_cmd)
 {
 	char	*full_path;
 	char	**env_array;
+    t_gc_node *child_gc;
 
 	if (redirect(cur_cmd->redirs) == -1)
-	{
-		gc_clean(&shell->gc);
 		exit(1);
-	}
 	if (is_builtin(cur_cmd->args[0]))
 	{
-		shell->last_exit_status = execute_builtin(shell);
+		shell->last_exit_status = execute_builtin(shell, cur_cmd);
 		gc_clean(&shell->gc);
+        gc_clean(&shell->env_gc);
 		exit(shell->last_exit_status);
 	}
-	if (is_not_found(shell, cur_cmd, &full_path, &shell->gc))
+	if (is_not_found(shell, cur_cmd, &full_path))
 		exit(127);
-	if (dir_perm(full_path, &shell->gc) == 1)
+	if (dir_perm(full_path, shell) == 1)
 		exit(126);
 	env_array = convert_env(shell, &shell->gc);
 	execve(full_path, cur_cmd->args, env_array);
@@ -257,9 +261,10 @@ void	exec_child(t_shell *shell, t_command *cur_cmd)
 	ft_putstr_fd(strerror(errno), 2);
 	ft_putstr_fd("\n", 2);
 	gc_clean(&shell->gc);
+    gc_clean(&shell->env_gc);
 }
 
-void	c_proc(t_shell *shell, int *next_pipe, int prev_pipe, int i)
+void	c_proc(t_shell *shell, t_command *cur_cmd, int *next_pipe, int prev_pipe, int i)
 {
 	// signal_handler
 	if (i > 0)
@@ -267,13 +272,13 @@ void	c_proc(t_shell *shell, int *next_pipe, int prev_pipe, int i)
 		dup2(prev_pipe, 0);
 		close(prev_pipe);
 	}
-	if (shell->cmd->next)
+	if (cur_cmd->next)
 	{
 		dup2(next_pipe[1], 1);
 		close(next_pipe[0]);
 		close(next_pipe[1]);
 	}
-	exec_child(shell, shell->cmd);
+	exec_child(shell, cur_cmd);
 }
 
 void	set_close(t_command *cmd, int *next_pipe, int *prev_pipe, int i)
@@ -287,32 +292,24 @@ void	set_close(t_command *cmd, int *next_pipe, int *prev_pipe, int i)
 	}
 }
 
-void	wait_all(t_shell *shell, int *pids, int i, int count)
+void    wait_all(t_shell *shell, int *pids, int count)
 {
-	int	j;
-	int	status;
+    int    j;
+    int    status;
+    int last_status;
 
-	j = 0;
-	if (count > 1)
-	{
-		while (j < i)
-		{
-			waitpid(pids[j], &status, 0);
-			j++;
-		}
-		if (i > 0 && WIFEXITED(status))
-			shell->last_exit_status = WEXITSTATUS(status);
-		else if (WIFSIGNALED(status))
-			shell->last_exit_status = 128 + WTERMSIG(status);
-	}
-	else
-	{
-		wait(&status);
-		if (WIFEXITED(status))
-			shell->last_exit_status = WEXITSTATUS(status);
-		else if (WIFSIGNALED(status))
-			shell->last_exit_status = 128 + WTERMSIG(status);
-	}
+    j = 0;
+    while (j < count)
+    {
+        waitpid(pids[j], &status, 0);
+        if (j == count -1)
+            last_status = status;
+        j++;
+    }
+    if (WIFEXITED(last_status))
+        shell->last_exit_status = WEXITSTATUS(last_status);
+    else if (WIFSIGNALED(last_status))
+        shell->last_exit_status = 128 + WTERMSIG(last_status);
 }
 
 void	exec_pipeline(t_shell *shell, int count)
@@ -320,14 +317,16 @@ void	exec_pipeline(t_shell *shell, int count)
 	int		next_pipe[2];
 	pid_t	*pids;
 	int		i;
-	int		prev_pipe;
+	int		prev_pipe;// i think i should remove it !!
+    t_command *cur_cmd;
 
 	prev_pipe = -1;
 	i = 0;
 	pids = gc_malloc(&shell->gc, count * sizeof(pid_t));
-	while (shell->cmd)
+    cur_cmd = shell->cmd;
+	while (cur_cmd)
 	{
-		if (shell->cmd->next && pipe(next_pipe) == -1)
+		if (cur_cmd->next && pipe(next_pipe) == -1)
 		{
 			perror("minishell");
 			break ;
@@ -336,7 +335,7 @@ void	exec_pipeline(t_shell *shell, int count)
 		if (pids[i] == -1)
 		{
 			perror("minishell: fork");
-			if (shell->cmd->next)
+			if (cur_cmd->next)
 			{
 				close(next_pipe[0]);
 				close(next_pipe[1]);
@@ -344,13 +343,13 @@ void	exec_pipeline(t_shell *shell, int count)
 			break ;
 		}
 		if (!pids[i])
-			c_proc(shell, next_pipe, prev_pipe, i);
+			c_proc(shell, cur_cmd, next_pipe, prev_pipe, i);
 		else
-			set_close(shell->cmd, next_pipe, &prev_pipe, i);
-		shell->cmd = shell->cmd->next;
+			set_close(cur_cmd, next_pipe, &prev_pipe, i);
+		cur_cmd = cur_cmd->next;
 		i++;
 	}
-	wait_all(shell, pids, --i, count);
+	wait_all(shell, pids, count);
 	if (prev_pipe != -1)
 		close(prev_pipe);
 }
@@ -358,24 +357,22 @@ void	exec_pipeline(t_shell *shell, int count)
 void	start_exec(t_shell *shell)
 {
 	int	count;
-	int	tmp_in;
-	int	tmp_out;
 
 	count = cmd_counter(shell->cmd);
 	if (count == 1 && is_builtin(shell->cmd->args[0]))
 	{
-		tmp_in = dup(0);
-		tmp_out = dup(1);
+		shell->stdin_fd = dup(0);
+		shell->stdout_fd = dup(1);
 		if (!redirect(shell->cmd->redirs))
 		{
 			shell->last_exit_status = 1;
 			write(2, "minishell: redirection error\n", 29);
 		}
 		else
-			shell->last_exit_status = execute_builtin(shell);
-		restore_stds(tmp_in, tmp_out);
-		close(tmp_in);
-		close(tmp_out);
+			shell->last_exit_status = execute_builtin(shell, shell->cmd);
+		restore_stds(shell->stdin_fd, shell->stdout_fd);
+		close(shell->stdin_fd);
+		close(shell->stdout_fd);
 	}
 	else
 		exec_pipeline(shell, count);

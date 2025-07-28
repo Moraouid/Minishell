@@ -84,7 +84,7 @@ char	*ft_substr(char *s, unsigned int start, size_t len, t_gc_node **gc)
 		return (ft_strdup("", gc));
 	if (len > s_len - start)
 		len = s_len - start;
-	sub = malloc(len + 1);
+	sub = gc_malloc(gc, len + 1);
 	if (!sub || !s)
 		return (NULL);
 	i = 0;
