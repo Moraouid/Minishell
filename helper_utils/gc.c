@@ -59,6 +59,7 @@ void	gc_remove(t_gc_node **gc, void *ptr)
 				prev->next = current->next;
 			else
 				*gc = current->next;
+			free(current->ptr);
 			free(current);
 			return ;
 		}
@@ -76,7 +77,7 @@ void	*gc_malloc(t_gc_node **gc, size_t size)
 	{
 		write(2, "minishell: malloc failed\n", 25);
 		gc_clean(gc);
-		exit(1);
+		exit(134);
 	}
 	gc_add(gc, ptr);
 	return (ptr);

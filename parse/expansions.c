@@ -57,7 +57,7 @@ char	*random_str(t_shell *shell)
 		}
 	}
 	r_str[i] = '\0';
-    close(fd);
+	close(fd);
 	return (r_str);
 }
 

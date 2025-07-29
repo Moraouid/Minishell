@@ -25,7 +25,6 @@
 # include "exec.h"
 # include <unistd.h>
 # include "parse.h"
-
 /* ----------------enum of errno--------------- */
 typedef enum e_errno
 {
@@ -129,8 +128,8 @@ typedef struct s_shell
 	t_token				*tokens;
 	t_gc_node			*gc;
 	t_gc_node			*env_gc;
-    int                 stdin_fd;
-    int                 stdout_fd;
+	int					stdin_fd;
+	int					stdout_fd;
 	t_command			*cmd;
 }						t_shell;
 

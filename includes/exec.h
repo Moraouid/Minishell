@@ -16,6 +16,7 @@
 typedef struct s_shell		t_shell;
 typedef struct s_env		t_env;
 typedef struct s_gc_node	t_gc_node;
+typedef struct s_redir      t_redir;
 typedef struct s_command	t_command;
 
 //??
@@ -57,5 +58,18 @@ t_env						*create_node(char *envp, t_gc_node **gc);
 void						start_exec(t_shell *shell);
 char						*get_env_value(t_env *env, char *key);
 int							cmd_counter(t_command *cmd);
+void						restore_stds(int stdin, int stdout);
+int							redirect(t_redir *rd);
+int							open_in(int *fd, char *filename);
+int							is_not_found(t_shell *shell, t_command *cur_cmd,
+								char **full_path);
 
+char						**convert_env(t_shell *shell, t_gc_node **gc);
+char						*find_bin(char *arg, t_env *env, t_gc_node **gc,
+								int *f_err);
+int							is_dir(char *full_path);
+int							dir_perm(char *full_path, t_shell *shell);
+void	exec_child(t_shell *shell, t_command *cur_cmd);
+int	is_builtin(char *cmd);
+int	execute_builtin(t_shell *shell, t_command *cmd);
 #endif

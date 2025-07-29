@@ -34,237 +34,18 @@ int	execute_builtin(t_shell *shell, t_command *cmd)
 	return (ret);
 }
 
-int	is_builtin(char *cmd)
+void	handle_parent(t_command *cmd, int *next_pipe, int *prev_pipe, int i)
 {
-	if (!ft_strcmp(cmd, "exit") || !ft_strcmp(cmd, "unset") || !ft_strcmp(cmd,
-			"env") || !ft_strcmp(cmd, "export") || !ft_strcmp(cmd, "cd")
-		|| !ft_strcmp(cmd, "pwd") || !ft_strcmp(cmd, "echo"))
-		return (1);
-	return (0);
+	if (i > 0)
+		close(*prev_pipe);
+	if (cmd->next)
+	{
+		*prev_pipe = next_pipe[0];
+		close(next_pipe[1]);
+	}
 }
 
-int	cmd_counter(t_command *cmd)
-{
-	int	count;
-
-	count = 0;
-	while (cmd)
-	{
-		++count;
-		cmd = cmd->next;
-	}
-	return (count);
-}
-
-int	open_in(int *fd, char *filename)
-{
-	*fd = open(filename, O_RDONLY);
-	if (*fd == -1)
-	{
-		perror("minishell");
-		return (0);
-	}
-	dup2(*fd, 0);
-	close(*fd);
-	return (1);
-}
-
-int	open_out(int *fd, char *filename, t_redir *rd)
-{
-	if (rd->type == OUTPUT)
-	{
-		*fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-		if (*fd == -1)
-		{
-			perror("minishell");
-			return (0);
-		}
-		dup2(*fd, 1);
-		close(*fd);
-	}
-	else if (rd->type == APPEND)
-	{
-		*fd = open(filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
-		if (*fd == -1)
-		{
-			perror("minishell");
-			return (0);
-		}
-		dup2(*fd, 1);
-		close(*fd);
-	}
-	return (1);
-}
-
-int	redirect(t_redir *rd)
-{
-	int		fd;
-	char	*filename;
-
-	while (rd)
-	{
-		filename = rd->target;
-		if (rd->type == HEREDOC)
-			filename = rd->h_filename;
-		if (rd->type == INPUT || rd->type == HEREDOC)
-		{
-			if (!open_in(&fd, filename))
-				return (0);
-		}
-		else if (!open_out(&fd, filename, rd))
-			return (0);
-		rd = rd->next;
-	}
-	return (1);
-}
-
-void	restore_stds(int stdin, int stdout)
-{
-	dup2(stdin, 1);
-	dup2(stdout, 0);
-}
-
-char	**convert_env(t_shell *shell, t_gc_node **gc)
-{
-	int		count;
-	t_env	*tmp;
-	char	**envp;
-	int		i;
-
-	count = 0;
-	tmp = shell->env;
-	while (tmp)
-	{
-		++count;
-		tmp = tmp->next;
-	}
-	envp = gc_malloc(gc, (count + 1) * sizeof(char *));
-	tmp = shell->env;
-	i = -1;
-	while (tmp)
-	{
-		envp[++i] = tmp->value;
-		tmp = tmp->next;
-	}
-	envp[count] = NULL;
-	return (envp);
-}
-
-char	*find_bin(char *arg, t_env *env, t_gc_node **gc, int *f_err)
-{
-	char	*full_path;
-	char	**paths;
-	char	*path;
-	int		i;
-
-	path = get_env_value(env, "PATH");
-	if (!path || !*path)
-	{
-		*f_err = 1;
-		return (NULL);
-	}
-	paths = ft_split(path, ':', gc);
-	i = -1;
-	while (paths[++i])
-	{
-		full_path = ft_strjoin(ft_strjoin(paths[i], "/", gc), arg, gc);
-		// check if binary is a directory
-		if (!access(full_path, F_OK))
-			return (full_path);
-	}
-	return (NULL);
-}
-
-int	is_not_found(t_shell *shell, t_command *cur_cmd, char **full_path)
-{
-	int	err;
-
-	err = 0;
-	if (!*cur_cmd->args[0])
-	{
-		cmd_error(cur_cmd->args[0], NULL, "command not found");
-		gc_clean(&shell->gc);
-		gc_clean(&shell->env_gc);
-		return (1);
-	}
-	if (ft_strchr(cur_cmd->args[0], '/'))
-    {
-		*full_path = ft_strdup(cur_cmd->args[0], &shell->gc);
-        err = 1;
-    }
-	else
-		*full_path = find_bin(cur_cmd->args[0], shell->env, &shell->gc, &err);
-	if (!*full_path || access(*full_path, F_OK))
-	{
-		if (!err)
-			cmd_error(cur_cmd->args[0], NULL, "command not found");
-		else
-			cmd_error(cur_cmd->args[0], NULL, "No such file or directory");
-		gc_clean(&shell->gc);
-        gc_clean(&shell->env_gc);
-        ///leaks
-		return (1);
-	}
-	return (0);
-}
-
-int	is_dir(char *full_path)
-{
-	struct stat	statbuf;
-
-	if (!stat(full_path, &statbuf))
-		return (S_ISDIR(statbuf.st_mode));
-	return (0);
-}
-
-int	dir_perm(char *full_path, t_shell *shell)
-{
-	if (is_dir(full_path))
-	{
-		cmd_error(full_path, NULL, "is a directory\n");
-		gc_clean(&shell->gc);
-        gc_clean(&shell->env_gc);
-        return (1);
-	}
-	if (access(full_path, X_OK))
-	{
-		cmd_error(full_path, NULL, "permission denied\n");
-		gc_clean(&shell->gc);
-        gc_clean(&shell->env_gc);
-		return (1);
-	}
-	return (0);
-}
-
-void	exec_child(t_shell *shell, t_command *cur_cmd)
-{
-	char	*full_path;
-	char	**env_array;
-    t_gc_node *child_gc;
-
-	if (redirect(cur_cmd->redirs) == -1)
-		exit(1);
-	if (is_builtin(cur_cmd->args[0]))
-	{
-		shell->last_exit_status = execute_builtin(shell, cur_cmd);
-		gc_clean(&shell->gc);
-        gc_clean(&shell->env_gc);
-		exit(shell->last_exit_status);
-	}
-	if (is_not_found(shell, cur_cmd, &full_path))
-		exit(127);
-	if (dir_perm(full_path, shell) == 1)
-		exit(126);
-	env_array = convert_env(shell, &shell->gc);
-	execve(full_path, cur_cmd->args, env_array);
-	ft_putstr_fd("minishell: ", 2);
-	ft_putstr_fd(strerror(errno), 2);
-	ft_putstr_fd("\n", 2);
-	gc_clean(&shell->gc);
-    gc_clean(&shell->env_gc);
-}
-
-void	c_proc(t_shell *shell, t_command *cur_cmd, int *next_pipe, int prev_pipe, int i)
+void	handle_child(t_shell *shell, t_command *cur_cmd, int *next_pipe, int prev_pipe, int i)
 {
 	// signal_handler
 	if (i > 0)
@@ -279,17 +60,6 @@ void	c_proc(t_shell *shell, t_command *cur_cmd, int *next_pipe, int prev_pipe, i
 		close(next_pipe[1]);
 	}
 	exec_child(shell, cur_cmd);
-}
-
-void	set_close(t_command *cmd, int *next_pipe, int *prev_pipe, int i)
-{
-	if (i > 0)
-		close(*prev_pipe);
-	if (cmd->next)
-	{
-		*prev_pipe = next_pipe[0];
-		close(next_pipe[1]);
-	}
 }
 
 void    wait_all(t_shell *shell, int *pids, int count)
@@ -343,9 +113,9 @@ void	exec_pipeline(t_shell *shell, int count)
 			break ;
 		}
 		if (!pids[i])
-			c_proc(shell, cur_cmd, next_pipe, prev_pipe, i);
+			handle_child(shell, cur_cmd, next_pipe, prev_pipe, i);
 		else
-			set_close(cur_cmd, next_pipe, &prev_pipe, i);
+			handle_parent(cur_cmd, next_pipe, &prev_pipe, i);
 		cur_cmd = cur_cmd->next;
 		i++;
 	}
@@ -366,7 +136,7 @@ void	start_exec(t_shell *shell)
 		if (!redirect(shell->cmd->redirs))
 		{
 			shell->last_exit_status = 1;
-			write(2, "minishell: redirection error\n", 29);
+            ft_putendl_fd("Niggshell: redirection error", 2);
 		}
 		else
 			shell->last_exit_status = execute_builtin(shell, shell->cmd);

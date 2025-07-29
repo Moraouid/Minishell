@@ -17,8 +17,6 @@ void	shell_init(t_shell *shell)
 	shell->r_line = NULL;
 	shell->tokens = NULL;
 	shell->cmd = NULL;
-
-    shell->last_exit_status = 0;
 }
 
 int	main(int ac, char **av, char **env)
@@ -50,8 +48,6 @@ int	main(int ac, char **av, char **env)
 			add_history(shell.r_line);
 			if(parsing_command(&shell))
 			    start_exec(&shell);
-			parsing_command(&shell);
-			start_exec(&shell);
 		}
 		gc_clean(&shell.gc);
 	}

@@ -111,7 +111,7 @@ void	creat_command(t_shell *shell)
 		i = 0;
 		while (shell->tokens && shell->tokens->type != PIPE)
 		{
-			while (shell->tokens && shell->tokens->type == WORD)
+			while (shell->tokens && (shell->tokens->type == WORD || shell->tokens->type == AMBGUS))
 			{
 				args[i] = ft_strdup(shell->tokens->value, &shell->gc);
 				shell->tokens = shell->tokens->next;
