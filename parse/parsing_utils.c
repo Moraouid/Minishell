@@ -6,7 +6,7 @@
 /*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/24 04:53:27 by sel-abbo          #+#    #+#             */
-/*   Updated: 2025/07/26 09:37:55 by zatais           ###   ########.fr       */
+/*   Updated: 2025/08/03 19:09:35 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,3 +38,41 @@ t_token	*creat_node_cmd(t_shell *shell, char *value, int type)
 	return (t_cmd);
 }
 
+int	count_word_list(t_token **token)
+{
+	int		count;
+	t_token	*cur;
+
+	count = 0;
+	cur = *token;
+	while (cur && cur->type != PIPE)
+	{
+		if (cur->type == WORD && cur->value)
+			count++;
+		cur = cur->next;
+	}
+	return (count);
+}
+
+int	isredirction(t_token *token)
+{
+	if (token->type == INPUT || token->type == OUTPUT || token->type == APPEND
+		|| token->type == HEREDOC)
+		return (1);
+	return (0);
+}
+
+void	add_back_cmd(t_command **cmd, t_command *n_cmd)
+{
+	t_command	*tmp;
+
+	if (!*cmd)
+	{
+		*cmd = n_cmd;
+		return ;
+	}
+	tmp = *cmd;
+	while (tmp->next)
+		tmp = tmp->next;
+	tmp->next = n_cmd;
+}

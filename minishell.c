@@ -6,13 +6,11 @@
 /*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 00:12:49 by sel-abbo          #+#    #+#             */
-/*   Updated: 2025/08/02 14:40:43 by zatais           ###   ########.fr       */
+/*   Updated: 2025/08/03 19:30:37 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "includes/gnl/get_next_line.h"
 #include "includes/minishell.h"
-
 
 void	shell_init(t_shell *shell)
 {
@@ -20,12 +18,41 @@ void	shell_init(t_shell *shell)
 	shell->tokens = NULL;
 	shell->cmd = NULL;
 }
+
+// char *get_next_line(int fd)
+// {
+//     static char buffer[1337];
+//     static int pos;
+//     static int r;
+//     int i = 0;
+//     char *line = malloc(100000);
+
+//     if(line == NULL || fd < 0 ||  1337 < 0)
+//         return (NULL);
+//     while(1)
+//     {
+//         if(pos >= r)
+//         {
+//             r = read(fd, buffer, 1337);
+//             pos = 0;
+//             if(r <= 0)
+//                 break;
+//         }
+//         if((line[i++] = buffer[pos++]) == '\n')
+//             break;
+//     }
+//     if(i == 0)
+//     {
+//         free(line);
+//         return (NULL);
+//     }
+//     return (line);
+// }
+
 // size_t	ft_strlcpy(char *dst,  char *src, size_t size)
 // {
 // 	size_t	i;
-//
-//
-// 	t_shell	shell;
+
 // 	i = 0;
 // 	if (size != 0)
 // 	{
@@ -48,13 +75,13 @@ void	shell_init(t_shell *shell)
 // 	}
 // 	return (0);
 // }
-//
+
 // char	*ft_strtrim(char  *s1, char  *set)
 // {
 // 	char	*res;
 // 	size_t	i;
 // 	size_t	size;
-//
+
 // 	if (!s1 || !set)
 // 		return (NULL);
 // i = 0;
@@ -69,7 +96,15 @@ void	shell_init(t_shell *shell)
 // 	ft_strlcpy(res, s1 + i, size - i + 1);
 // 	return (res);
 // }
-//
+// if (isatty(fileno(stdin)))
+// 	shell.r_line = readline("Niggshell~> ");
+// else
+// {
+// 	line = get_next_line(fileno(stdin));
+// 	shell.r_line = ft_strtrim(line, "\n");
+// 	free(line);
+// }
+
 
 int	shlvl(t_env *env, t_gc_node **gc)
 {
@@ -117,8 +152,7 @@ void	init_env(t_env **env, t_gc_node **gc)
 int	main(int ac, char **av, char **env)
 {
 	t_shell	shell;
-	// char *line;
-    
+
 	(void)ac;
 	(void)av;
 	shell.env = NULL;

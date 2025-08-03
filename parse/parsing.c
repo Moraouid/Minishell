@@ -6,7 +6,7 @@
 /*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/10 21:26:17 by zatais            #+#    #+#             */
-/*   Updated: 2025/07/26 15:09:49 by sel-abbo         ###   ########.fr       */
+/*   Updated: 2025/08/03 19:13:03 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,6 +126,8 @@ int	parsing_command(t_shell *shell)
 	if (!check_syntax_error(shell, shell->tokens))
 		return (0);
 	expansions(shell);
+	remove_quotes(shell);
+	remove_expand_quotes(shell->tokens, shell->r_str, &shell->gc);
 	// print_tokens(shell);
 	creat_command(shell);
 	// printf("\nCommands:\n-----------------\n");

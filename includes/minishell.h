@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zatais <zatais@student.1337.ma>            +#+  +:+       +#+        */
+/*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 07:54:04 by zatais            #+#    #+#             */
-/*   Updated: 2025/07/26 08:15:14 by zatais           ###   ########.fr       */
+/*   Updated: 2025/08/03 16:25:33 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define MINISHELL_H
 
 # include <stdio.h>
+# include <stdlib.h>
 # include "exec.h"
 # include "parse.h"
 # include <errno.h>
@@ -21,10 +22,10 @@
 # include <limits.h>
 # include <readline/history.h>
 # include <readline/readline.h>
-# include <stdlib.h>
 # include <sys/stat.h>
 # include <sys/wait.h>
 # include <unistd.h>
+# include <stdbool.h>
 
 /* ----------------enum of errno--------------- */
 typedef enum e_errno
@@ -68,6 +69,7 @@ typedef struct s_quotes_flag
 	int					dq;
 	int					rq;
 	int					len;
+	int					start;
 }						t_quotes;
 
 /* --------------struct of env----------------- */

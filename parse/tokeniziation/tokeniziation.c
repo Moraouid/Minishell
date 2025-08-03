@@ -6,11 +6,11 @@
 /*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/24 03:57:54 by sel-abbo          #+#    #+#             */
-/*   Updated: 2025/07/20 06:29:32 by sel-abbo         ###   ########.fr       */
+/*   Updated: 2025/08/03 17:44:29 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "../../includes/minishell.h"
 
 t_token	*handle_operator(t_shell *shell, int *i, int type)
 {
@@ -68,15 +68,6 @@ t_token	*handle_word(t_shell *shell, char *r_line, int *i)
 	return (creat_node_cmd(shell, cmd, WORD));
 }
 
-t_token	*handle_word_token(t_shell *shell, int *i)
-{
-	t_token	*n_token;
-
-	n_token = handle_word(shell, shell->r_line, i);
-	return (n_token);
-}
-
-
 int	tokeniziation(t_shell *shell)
 {
 	int		i;
@@ -96,7 +87,7 @@ int	tokeniziation(t_shell *shell)
 		if (is_operator(shell->r_line, i))
 			n_token = handle_operator(shell, &i, type);
 		else
-			n_token = handle_word_token(shell, &i);
+			n_token = handle_word(shell, shell->r_line, &i);
 		add_token(&shell->tokens, n_token);
 	}
 	return (1);
