@@ -20,7 +20,7 @@ void	print_error(t_shell *shell, t_errno ty_errno, char *str)
 		write(2, "Niggshell: syntax error near unexpected token ", 46);
 	write(2, str, ft_strlen(str));
 	write(2, "\n", 1);
-    shell->last_exit_status = 2;
+	shell->last_exit_status = 2;
 }
 
 int	check_quots(t_shell *shell, char *r_line)
@@ -78,12 +78,13 @@ int	check_redir(t_shell *shell, t_token *token)
 	cur = token;
 	while (cur)
 	{
-		if (isredirction(cur) && (cur->next == NULL || isredirction(cur->next)))
+		if (isredirction(cur) && (cur->next == NULL || isredirction(cur->next)
+				|| cur->next->type == PIPE))
 		{
 			if (cur->next)
 				print_error(shell, ERRNO_RD, cur->next->value);
 			else
-				print_error(shell ,ERRNO_RD, "'newline'");
+				print_error(shell, ERRNO_RD, "'newline'");
 			return (0);
 		}
 		cur = cur->next;

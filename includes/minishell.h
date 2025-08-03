@@ -13,18 +13,19 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
+# include <stdio.h>
+# include "exec.h"
+# include "parse.h"
 # include <errno.h>
 # include <fcntl.h>
 # include <limits.h>
 # include <readline/history.h>
 # include <readline/readline.h>
-# include <stdio.h>
 # include <stdlib.h>
 # include <sys/stat.h>
 # include <sys/wait.h>
-# include "exec.h"
 # include <unistd.h>
-# include "parse.h"
+
 /* ----------------enum of errno--------------- */
 typedef enum e_errno
 {
@@ -61,10 +62,13 @@ typedef enum e_token_type
 /* -------------struct of quotes flag---------- */
 typedef struct s_quotes_flag
 {
+	int					i;
+	int					j;
 	int					sq;
 	int					dq;
 	int					rq;
-}						t_bool_quotes;
+	int					len;
+}						t_quotes;
 
 /* --------------struct of env----------------- */
 typedef struct s_env
@@ -85,6 +89,7 @@ typedef struct s_token
 typedef struct s_redir
 {
 	int					type;
+	int					f_ambiguous;
 	char				*target;
 	char				*h_filename;
 	struct s_redir		*next;
@@ -99,14 +104,6 @@ typedef struct s_command
 	struct s_command	*next;
 }						t_command;
 
-/* ------------struct of expansions------------ */
-
-typedef struct s_expand
-{
-	char				*value;
-	struct s_expand		*next;
-}						t_expand;
-
 /* ---------------struct of g_col-------------- */
 typedef struct s_gc_node
 {
@@ -117,19 +114,19 @@ typedef struct s_gc_node
 /* ---------------struct of shell-------------- */
 typedef struct s_shell
 {
-	char				*r_line;
+	int					last_exit_status;
+	int					stdout_fd;
+	int					stdin_fd;
 	char				**envp;
+	char				*r_line;
 	char				*r_str;
 	char				*joined_line;
 	char				*cwd;
-	int					last_exit_status;
 	t_env				*env;
 	t_env				*s_env;
 	t_token				*tokens;
 	t_gc_node			*gc;
 	t_gc_node			*env_gc;
-	int					stdin_fd;
-	int					stdout_fd;
 	t_command			*cmd;
 }						t_shell;
 

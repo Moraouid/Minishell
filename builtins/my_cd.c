@@ -24,26 +24,6 @@ int	count_arguments(char **args)
 	return (count);
 }
 
-char	*get_env_value(t_env *env, char *key)
-{
-	size_t	key_len;
-	char	*val;
-
-	key_len = ft_strlen(key);
-	while (env)
-	{
-		if (!ft_strncmp(env->value, key, key_len) && (env->value[key_len] == '='
-				|| env->value[key_len] == '\0'))
-		{
-			val = ft_strchr(env->value, '=');
-			if (val)
-				return (val + 1);
-		}
-		env = env->next;
-	}
-	return (NULL);
-}
-
 char	*get_path(t_shell *shell, char **args)
 {
 	int		count;
@@ -56,6 +36,8 @@ char	*get_path(t_shell *shell, char **args)
 		home = get_env_value(shell->env, "HOME");
 		if (!home)
 			cmd_error("cd", NULL, "HOME not set");
+		else if (!*home)
+			return (ft_strdup(".", &shell->gc));
 		return (home);
 	}
 	if (!ft_strcmp(args[0], "-"))
@@ -68,65 +50,63 @@ char	*get_path(t_shell *shell, char **args)
 	return (args[0]);
 }
 
-int	update_pwd_vars(t_shell *shell, char *oldpwd, char *new)
+void	update_pwd_vars(t_shell *shell, char *oldpwd, char *new)
 {
 	char	*oldpwd_arg;
 	char	*pwd_arg;
 	char	*export_args[3];
-	int		exp_ret;
+	char	*unset_arg[2];
 
-	oldpwd_arg = ft_strjoin("OLDPWD=", oldpwd, &shell->gc);
-	pwd_arg = ft_strjoin("PWD=", new, &shell->gc);
+	pwd_arg = NULL;
+	oldpwd_arg = NULL;
+	unset_arg[0] = "OLDPWD";
+	unset_arg[1] = NULL;
+	if (oldpwd)
+	{
+		oldpwd_arg = ft_strjoin("OLDPWD=", oldpwd, &shell->gc);
+		pwd_arg = ft_strjoin("PWD=", new, &shell->gc);
+	}
+	else
+		my_unset(&shell->env, unset_arg, &shell->gc);
 	export_args[0] = oldpwd_arg;
 	export_args[1] = pwd_arg;
 	export_args[2] = NULL;
-	exp_ret = my_export(&shell->env, export_args, &shell->env_gc);
-	return (!exp_ret);
+	if (oldpwd)
+		my_export(&shell->env, export_args, &shell->env_gc);
 }
 
-int	update_cwd(t_shell *shell, char *new_path, t_gc_node **gc)
+void	update_cwd(t_shell *shell, char *new_path)
 {
 	char	*new_cwd;
 
-	new_cwd = ft_strdup(new_path, &shell->gc);
+	new_cwd = ft_strdup(new_path, &shell->env_gc);
 	shell->cwd = new_cwd;
-	return (1);
 }
 
-int	my_cd(t_shell *shell, char **args, t_gc_node **gc)
+int	my_cd(t_shell *shell, char **args)
 {
 	char	*oldpwd;
 	char	*path;
 	int		print;
 	char	*new;
-	int		status;
 
 	oldpwd = get_env_value(shell->env, "PWD");
 	if (count_arguments(args) > 1)
-	{
-		cmd_error("cd", NULL, "too many arguments");
-		return (1);
-	}
+		return (cmd_error("cd", NULL, "too many arguments"), 1);
 	path = get_path(shell, args);
 	if (!path)
 		return (1);
 	print = (args[0] && !ft_strcmp(args[0], "-"));
 	if (chdir(path))
-	{
-		cmd_error("cd", path, strerror(errno));
-		return (1);
-	}
+		return (cmd_error("cd", path, strerror(errno)), 1);
 	new = getcwd(NULL, 0);
 	if (!new)
 		new = ft_strdup(path, &shell->gc);
 	else
 		gc_add(&shell->gc, new);
 	if (print)
-        ft_putendl_fd(new, 1);
-	status = 0;
-	if (!update_pwd_vars(shell, oldpwd, new))
-		status = 1;
-	if (!update_cwd(shell, new, gc))
-		status = 1;
-	return (status);
+		ft_putendl_fd(new, 1);
+	update_pwd_vars(shell, oldpwd, new);
+	update_cwd(shell, new);
+	return (0);
 }

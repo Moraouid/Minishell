@@ -35,7 +35,7 @@ void	gc_add(t_gc_node **gc, void *ptr)
 	node = malloc(sizeof(t_gc_node));
 	if (!node)
 	{
-		write(2, "minishell: gc_add malloc failed\n", 31);
+		write(2, "Niggshell: gc_add malloc failed\n", 31);
     gc_clean(gc);
 		exit(1);
 	}
@@ -75,7 +75,7 @@ void	*gc_malloc(t_gc_node **gc, size_t size)
 	ptr = malloc(size);
 	if (!ptr)
 	{
-		write(2, "minishell: malloc failed\n", 25);
+		write(2, "Niggshell: malloc failed\n", 25);
 		gc_clean(gc);
 		exit(134);
 	}

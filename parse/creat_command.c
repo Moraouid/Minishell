@@ -12,24 +12,28 @@
 
 #include "../includes/minishell.h"
 
-t_redir	*creat_node_redirction(t_shell *shell, t_token_type type, char *target)
+t_redir	*creat_node_redirction(t_shell *shell, t_token_type type, t_token *next)
 {
 	t_redir	*redirction;
 
-	redirction = gc_malloc(&shell->gc , sizeof(t_redir));
+	redirction = gc_malloc(&shell->gc, sizeof(t_redir));
 	memset(redirction, 0, sizeof(t_redir));
 	redirction->type = type;
-	if (type == HEREDOC)
-		redirction->h_filename = target;
+	if (next->type == AMBGUS)
+		redirction->f_ambiguous = 1;
 	else
-		redirction->target = target;
+		redirction->f_ambiguous = 0;
+	if (type == HEREDOC)
+		redirction->h_filename = next->value;
+	else
+		redirction->target = next->value;
 	redirction->next = NULL;
 	return (redirction);
 }
 
 void	add_back_redir(t_redir **redir, t_redir *new_redir)
 {
-t_redir	*temp;
+	t_redir	*temp;
 
 	if (!*redir)
 	{
@@ -85,7 +89,7 @@ int	count_word_list(t_token **token)
 	cur = *token;
 	while (cur && cur->type != PIPE)
 	{
-		if (cur->type == WORD)
+		if (cur->type == WORD && cur->value)
 			count++;
 		cur = cur->next;
 	}
@@ -94,37 +98,38 @@ int	count_word_list(t_token **token)
 
 void	creat_command(t_shell *shell)
 {
+	int			i;
+	int			count;
+	char		**args;
 	t_redir		*redir;
 	t_redir		*n_redir;
 	t_command	*n_cmd;
-	char		**args;
-	int			i;
-	int			count;
 
-	shell->cmd = NULL;
 	redir = NULL;
+	shell->cmd = NULL;
 	while (shell->tokens)
 	{
+		i = 0;
+		n_cmd = NULL;
 		count = count_word_list(&shell->tokens);
 		args = gc_malloc(&shell->gc, (count + 1) * sizeof(char *));
-		n_cmd = NULL;
-		i = 0;
 		while (shell->tokens && shell->tokens->type != PIPE)
 		{
-			while (shell->tokens && (shell->tokens->type == WORD || shell->tokens->type == AMBGUS))
+			while (shell->tokens && (shell->tokens->type == WORD
+					|| shell->tokens->type == AMBGUS))
 			{
-				args[i] = ft_strdup(shell->tokens->value, &shell->gc);
+				if (shell->tokens->value)
+					args[i++] = ft_strdup(shell->tokens->value, &shell->gc);
 				shell->tokens = shell->tokens->next;
-				i++;
 			}
-      args[i] = NULL;
 			while (shell->tokens && isredirction(shell->tokens))
 			{
 				n_redir = creat_node_redirction(shell, shell->tokens->type,
-						shell->tokens->next->value);
+						shell->tokens->next);
 				add_back_redir(&redir, n_redir);
 				shell->tokens = shell->tokens->next->next;
 			}
+			args[i] = NULL;
 		}
 		n_cmd = creat_cmd(shell, args, redir);
 		add_back_cmd(&shell->cmd, n_cmd);

@@ -33,31 +33,33 @@ int	cmd_counter(t_command *cmd)
 	return (count);
 }
 
-
-void	exec_child(t_shell *shell, t_command *cur_cmd)
+void    clean_exit(int status, t_shell *shell)
 {
-	char	*full_path;
-	char	**env_array;
-    t_gc_node *child_gc;
-
-	if (redirect(cur_cmd->redirs) == -1)
-		exit(1);
-	if (is_builtin(cur_cmd->args[0]))
-	{
-		shell->last_exit_status = execute_builtin(shell, cur_cmd);
-		gc_clean(&shell->gc);
-        gc_clean(&shell->env_gc);
-		exit(shell->last_exit_status);
-	}
-	if (is_not_found(shell, cur_cmd, &full_path))
-		exit(127);
-	if (dir_perm(full_path, shell) == 1)
-		exit(126);
-	env_array = convert_env(shell, &shell->gc);
-	execve(full_path, cur_cmd->args, env_array);
-    cmd_error(full_path, NULL, strerror(errno));
-	gc_clean(&shell->gc);
+    gc_clean(&shell->gc);
     gc_clean(&shell->env_gc);
-    exit(126);
+    exit(status);
 }
 
+void    exec_child(t_shell *shell, t_command *cur_cmd)
+{
+    char    *full_path;
+    char    **env_array;
+
+    if (!redirect(cur_cmd->redirs))
+        clean_exit(1, shell);
+    if (cur_cmd->args[0] && is_builtin(cur_cmd->args[0]))
+    {
+        shell->last_exit_status = execute_builtin(shell, cur_cmd);
+        clean_exit(shell->last_exit_status, shell);
+    }
+    if (!cur_cmd->args[0])
+        clean_exit(0, shell);
+    if (is_not_found(shell, cur_cmd, &full_path))
+        clean_exit(127, shell);
+    if (dir_perm(full_path, shell) == 1)
+        clean_exit(126, shell);
+    env_array = convert_env(shell, &shell->gc);
+    execve(full_path, cur_cmd->args, env_array);
+    cmd_error(full_path, NULL, strerror(errno));
+    clean_exit(126, shell);
+}

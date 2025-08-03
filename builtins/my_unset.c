@@ -12,9 +12,6 @@
 
 #include "../includes/minishell.h"
 
-
-
- ///leaked
 void	free_and_update(t_env **prev, t_env **current, t_env **env, t_gc_node **gc)
 {
 	t_env	*temp;
@@ -43,6 +40,7 @@ int	my_unset(t_env **env, char **args, t_gc_node **gc)
 	if (!args || !*args)
 		return (0);
 	i = -1;
+    //chech for invalid like unset -test or +++test and print error
 	while (args[++i])
 	{
 		current = *env;

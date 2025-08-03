@@ -16,7 +16,7 @@
 typedef struct s_shell		t_shell;
 typedef struct s_env		t_env;
 typedef struct s_gc_node	t_gc_node;
-typedef struct s_redir      t_redir;
+typedef struct s_redir		t_redir;
 typedef struct s_command	t_command;
 
 //??
@@ -45,7 +45,7 @@ int							ft_isalnum(int c);
 int							ft_isalpha(int c);
 int							my_env(t_env *env, char **args);
 t_env						*find_env_var(t_env *env, char *name);
-int							my_cd(t_shell *shell, char **args, t_gc_node **gc);
+int							my_cd(t_shell *shell, char **args);
 char						**ft_split(char *s, char c, t_gc_node **gc);
 int							my_export(t_env **env, char **args, t_gc_node **gc);
 char						*ft_strdup(char *s, t_gc_node **gc);
@@ -63,13 +63,26 @@ int							redirect(t_redir *rd);
 int							open_in(int *fd, char *filename);
 int							is_not_found(t_shell *shell, t_command *cur_cmd,
 								char **full_path);
-
 char						**convert_env(t_shell *shell, t_gc_node **gc);
 char						*find_bin(char *arg, t_env *env, t_gc_node **gc,
 								int *f_err);
 int							is_dir(char *full_path);
 int							dir_perm(char *full_path, t_shell *shell);
-void	exec_child(t_shell *shell, t_command *cur_cmd);
-int	is_builtin(char *cmd);
-int	execute_builtin(t_shell *shell, t_command *cmd);
+void						exec_child(t_shell *shell, t_command *cur_cmd);
+int							is_builtin(char *cmd);
+int							execute_builtin(t_shell *shell, t_command *cmd);
+int							compare_env_vars(char *s1, char *s2);
+int							sort_env(t_env *exp);
+int							copy_sort(t_env *env, t_env **exp, t_gc_node **gc);
+int							valid_identifier(char *name);
+void						print_sorted_env(t_env *exp);
+int							is_full_alpha(char *val);
+void						cmd_error2(char *arg);
+int							create_new_node(t_env **env, char *arg,
+								t_gc_node **gc);
+int							fork_err(t_command *cur_cmd, int pid, int *pipes);
+void						parent_process(t_command *cmd, int *pipes);
+void						child_process(t_shell *shell, t_command *cmd,
+								int *pipes);
+
 #endif

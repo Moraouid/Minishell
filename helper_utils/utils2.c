@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "../includes/minishell.h"
+#include <unistd.h>
 
 size_t	ft_strlen(char *s)
 {
@@ -62,6 +63,8 @@ char	*ft_strdup(char *s, t_gc_node **gc)
 	char	*dup;
 	size_t	i;
 
+	if (!s)
+		return (NULL);
 	len = ft_strlen(s) + 1;
 	dup = gc_malloc(gc, len);
 	i = 0;

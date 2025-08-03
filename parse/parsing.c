@@ -119,71 +119,6 @@ void	print_commands(t_command *cmd)
 	}
 }
 
-int	len_whitout_quotes(char *value)
-{
-	int		i;
-	int		count;
-	char	quote;
-
-	i = 0;
-	count = 0;
-	while (value[i])
-	{
-		if (value[i] == '\'' || value[i] == '"')
-		{
-			quote = value[i++];
-			while (value[i] && value[i] != quote)
-			{
-				count++;
-				i++;
-			}
-			i++;
-		}
-		else
-		{
-			count++;
-			i++;
-		}
-	}
-	return (count);
-}
-
-void	remove_quotes(t_shell *shell)
-{
-	int		i;
-	int		j;
-	int		len;
-	char	quote;
-	t_token	*current;
-	char	*value;
-
-	current = shell->tokens;
-	while (current)
-	{
-		i = 0;
-		j = 0;
-		len = len_whitout_quotes(current->value);
-		value = gc_malloc(&shell->gc, len + 1);
-        // if(!*current->vaue)
-
-		while (current->value[i])
-		{
-			if (current->value[i] == '\'' || current->value[i] == '"')
-			{
-				quote = current->value[i++];
-				while (current->value[i] && current->value[i] != quote)
-					value[j++] = current->value[i++];
-				i++;
-			}
-			else
-				value[j++] = current->value[i++];
-		}
-		value[j] = '\0';
-		current->value = value;
-		current = current->next;
-	}
-}
-
 int	parsing_command(t_shell *shell)
 {
 	if (!tokeniziation(shell))
@@ -191,7 +126,6 @@ int	parsing_command(t_shell *shell)
 	if (!check_syntax_error(shell, shell->tokens))
 		return (0);
 	expansions(shell);
-	remove_quotes(shell);
 	// print_tokens(shell);
 	creat_command(shell);
 	// printf("\nCommands:\n-----------------\n");

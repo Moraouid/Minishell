@@ -33,7 +33,7 @@ void	add_back(t_env **env, t_env *new)
 {
 	t_env	*last;
 
-  if (!(*env))
+	if (!(*env))
 	{
 		*env = new;
 		return ;
@@ -49,8 +49,8 @@ int	copy_env(char **envp, t_env **env, t_gc_node **gc)
 	t_env	*new_node;
 
 	i = -1;
-    if (!envp || !envp[0])
-        return (0);
+	if (!envp || !envp[0])
+		return (0);
 	while (envp[++i])
 	{
 		new_node = create_node(envp[i], gc);

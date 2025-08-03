@@ -12,13 +12,17 @@
 
 #include "../includes/minishell.h"
 
+//
+// unset PATH
+// tmp_x_file1
+// echo $?
 int	execute_builtin(t_shell *shell, t_command *cmd)
 {
 	int	ret;
 
 	ret = 127;
 	if (!ft_strncmp(cmd->args[0], "cd", 3))
-		ret = my_cd(shell, &cmd->args[1], &shell->gc);
+		ret = my_cd(shell, &cmd->args[1]);
 	else if (!ft_strncmp(cmd->args[0], "echo", 5))
 		ret = my_echo(&cmd->args[1]);
 	else if (!ft_strncmp(cmd->args[0], "env", 4))
@@ -34,94 +38,69 @@ int	execute_builtin(t_shell *shell, t_command *cmd)
 	return (ret);
 }
 
-void	handle_parent(t_command *cmd, int *next_pipe, int *prev_pipe, int i)
+void	wait_all(t_shell *shell, int *pids, int count)
 {
-	if (i > 0)
-		close(*prev_pipe);
-	if (cmd->next)
+	int	j;
+	int	status;
+	int	last_status;
+
+	j = 0;
+	while (j < count)
 	{
-		*prev_pipe = next_pipe[0];
-		close(next_pipe[1]);
+		waitpid(pids[j], &status, 0);
+		if (j == count - 1)
+			last_status = status;
+		j++;
 	}
+	if (WIFEXITED(last_status))
+		shell->last_exit_status = WEXITSTATUS(last_status);
+	else if (WIFSIGNALED(last_status))
+		shell->last_exit_status = 128 + WTERMSIG(last_status);
 }
 
-void	handle_child(t_shell *shell, t_command *cur_cmd, int *next_pipe, int prev_pipe, int i)
+int	setup_pipe(t_command *cmd, int *pipes)
 {
-	// signal_handler
-	if (i > 0)
-	{
-		dup2(prev_pipe, 0);
-		close(prev_pipe);
-	}
-	if (cur_cmd->next)
-	{
-		dup2(next_pipe[1], 1);
-		close(next_pipe[0]);
-		close(next_pipe[1]);
-	}
-	exec_child(shell, cur_cmd);
-}
+	int	new_pipe[2];
 
-void    wait_all(t_shell *shell, int *pids, int count)
-{
-    int    j;
-    int    status;
-    int last_status;
-
-    j = 0;
-    while (j < count)
-    {
-        waitpid(pids[j], &status, 0);
-        if (j == count -1)
-            last_status = status;
-        j++;
-    }
-    if (WIFEXITED(last_status))
-        shell->last_exit_status = WEXITSTATUS(last_status);
-    else if (WIFSIGNALED(last_status))
-        shell->last_exit_status = 128 + WTERMSIG(last_status);
+	if (!cmd->next)
+		return (1);
+	if (pipe(new_pipe) == -1)
+	{
+		perror("Niggshell");
+		return (0);
+	}
+	pipes[1] = new_pipe[0];
+	pipes[2] = new_pipe[1];
+	return (1);
 }
 
 void	exec_pipeline(t_shell *shell, int count)
 {
-	int		next_pipe[2];
-	pid_t	*pids;
-	int		i;
-	int		prev_pipe;// i think i should remove it !!
-    t_command *cur_cmd;
+	int			pipes[3];
+	pid_t		*pids;
+	int			i;
+	t_command	*cur_cmd;
 
-	prev_pipe = -1;
-	i = 0;
+	pipes[0] = -1;
+	i = -1;
 	pids = gc_malloc(&shell->gc, count * sizeof(pid_t));
-    cur_cmd = shell->cmd;
+	cur_cmd = shell->cmd;
 	while (cur_cmd)
 	{
-		if (cur_cmd->next && pipe(next_pipe) == -1)
-		{
-			perror("minishell");
+		if (!setup_pipe(cur_cmd, pipes))
 			break ;
-		}
-		pids[i] = fork();
-		if (pids[i] == -1)
-		{
-			perror("minishell: fork");
-			if (cur_cmd->next)
-			{
-				close(next_pipe[0]);
-				close(next_pipe[1]);
-			}
+		pids[++i] = fork();
+		if (fork_err(cur_cmd, pids[i], pipes))
 			break ;
-		}
-		if (!pids[i])
-			handle_child(shell, cur_cmd, next_pipe, prev_pipe, i);
+		if (pids[i] == 0)
+			child_process(shell, cur_cmd, pipes);
 		else
-			handle_parent(cur_cmd, next_pipe, &prev_pipe, i);
+			parent_process(cur_cmd, pipes);
 		cur_cmd = cur_cmd->next;
-		i++;
 	}
+	if (pipes[0] != -1)
+		close(pipes[0]);
 	wait_all(shell, pids, count);
-	if (prev_pipe != -1)
-		close(prev_pipe);
 }
 
 void	start_exec(t_shell *shell)
@@ -129,15 +108,12 @@ void	start_exec(t_shell *shell)
 	int	count;
 
 	count = cmd_counter(shell->cmd);
-	if (count == 1 && is_builtin(shell->cmd->args[0]))
+	if (count == 1 && shell->cmd->args[0] && is_builtin(shell->cmd->args[0]))
 	{
-		shell->stdin_fd = dup(0);
-		shell->stdout_fd = dup(1);
+		shell->stdin_fd = dup(STDIN_FILENO);
+		shell->stdout_fd = dup(STDOUT_FILENO);
 		if (!redirect(shell->cmd->redirs))
-		{
 			shell->last_exit_status = 1;
-            ft_putendl_fd("Niggshell: redirection error", 2);
-		}
 		else
 			shell->last_exit_status = execute_builtin(shell, shell->cmd);
 		restore_stds(shell->stdin_fd, shell->stdout_fd);

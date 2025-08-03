@@ -104,6 +104,7 @@ int	dir_perm(char *full_path, t_shell *shell)
         gc_clean(&shell->env_gc);
         return (1);
 	}
+    //shoild tragger this error |^
 	if (access(full_path, X_OK))
 	{
 		cmd_error(full_path, NULL, "permission denied");

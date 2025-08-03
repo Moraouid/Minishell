@@ -17,10 +17,10 @@ int	open_in(int *fd, char *filename)
 	*fd = open(filename, O_RDONLY);
 	if (*fd == -1)
 	{
-		perror("minishell");
+		perror("Niggshell");
 		return (0);
 	}
-	dup2(*fd, 0);
+	dup2(*fd, STDIN_FILENO);
 	close(*fd);
 	return (1);
 }
@@ -32,10 +32,10 @@ int	open_out(int *fd, char *filename, t_redir *rd)
 		*fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 		if (*fd == -1)
 		{
-			perror("minishell");
+			perror("Niggshell");
 			return (0);
 		}
-		dup2(*fd, 1);
+		dup2(*fd, STDOUT_FILENO);
 		close(*fd);
 	}
 	else if (rd->type == APPEND)
@@ -43,10 +43,10 @@ int	open_out(int *fd, char *filename, t_redir *rd)
 		*fd = open(filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
 		if (*fd == -1)
 		{
-			perror("minishell");
+			perror("Niggshell");
 			return (0);
 		}
-		dup2(*fd, 1);
+		dup2(*fd, STDOUT_FILENO);
 		close(*fd);
 	}
 	return (1);
@@ -59,6 +59,11 @@ int	redirect(t_redir *rd)
 
 	while (rd)
 	{
+		if (rd->f_ambiguous)
+		{
+			ft_putstr_fd("Niggshell: ambiguous redirect\n", 2);
+			return (0);
+		}
 		filename = rd->target;
 		if (rd->type == HEREDOC)
 			filename = rd->h_filename;
@@ -76,6 +81,6 @@ int	redirect(t_redir *rd)
 
 void	restore_stds(int stdin, int stdout)
 {
-	dup2(stdin, 1);
-	dup2(stdout, 0);
+	dup2(stdin, STDIN_FILENO);
+	dup2(stdout, STDOUT_FILENO);
 }

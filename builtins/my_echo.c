@@ -14,6 +14,7 @@
 
 void	print_args(char **args, int flag, int start, int spaces)
 {
+    //issue in spacing echo -n  -n -n -n 42
 	while (args[start])
 	{
 		ft_putstr_fd(args[start], 1);

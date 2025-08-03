@@ -36,7 +36,7 @@ int	my_env(t_env *env, char **args)
 		if (!ft_strncmp(env->value, "_=", 2))
 		{
 			tmp = env;
-            env = env->next;
+			env = env->next;
 			continue ;
 		}
 		if (ft_strchr(env->value, '='))
@@ -44,8 +44,9 @@ int	my_env(t_env *env, char **args)
 			printf("%s\n", env->value);
 			env = env->next;
 		}
+		else
+			env = env->next;
 	}
 	printf("%s\n", tmp->value);
 	return (0);
 }
-

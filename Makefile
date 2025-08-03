@@ -1,4 +1,4 @@
-SRC_DIRS =  parse builtins helper_utils exec
+SRC_DIRS =  parse builtins helper_utils exec includes/gnl
 SRCS =  minishell.c $(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.c))
 OBJS = $(SRCS:.c=.o)
 NAME = minishell

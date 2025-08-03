@@ -22,7 +22,7 @@ int	exit_status(char *status, int *exit)
 	i = -1;
 	while (is_space(status[++i]))
 		;
-	if (status[i] == '-')
+	if (status[i] == '-' || status[i] == '+')
 		++i;
 	while (status[i])
 	{
@@ -35,10 +35,13 @@ int	exit_status(char *status, int *exit)
 	return (overflow);
 }
 
-void	exit_all(int status, t_shell *shell)
+void	exit_all(int status, t_shell *shell, int count)
 {
-	close(shell->stdin_fd);
-	close(shell->stdout_fd);
+    if (count == 1)
+    {
+        close(shell->stdin_fd);
+        close(shell->stdout_fd);
+    }
 	gc_clean(&shell->env_gc);
 	gc_clean(&shell->gc);
 	exit(status);
@@ -56,15 +59,15 @@ int	my_exit(char **args, t_shell *shell)
 	if (cmd_count == 1)
 		ft_putendl_fd("exit", 2);
 	if (!n)
-		exit_all(shell->last_exit_status, shell);
+		exit_all(shell->last_exit_status, shell, cmd_count);
 	error = exit_status(args[0], &status);
 	if (error)
 	{
 		cmd_error("exit", args[0], "numeric argument required");
-		exit_all(2, shell);
+		exit_all(2, shell, cmd_count);
 	};
 	if (n > 1)
 		return (cmd_error("exit", NULL, "too many arguments"), 1);
-	exit_all(status, shell);
+	exit_all(status, shell, cmd_count);
 	return (status);
 }
