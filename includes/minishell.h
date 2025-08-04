@@ -17,12 +17,13 @@
 # include <fcntl.h>
 # include <limits.h>
 # include <stdio.h>
-#include <stdlib.h>
+# include <stdlib.h>
 # include <readline/history.h>
 # include <readline/readline.h>
 # include <stdbool.h>
 # include <sys/stat.h>
 # include <sys/wait.h>
+#include <signal.h>
 # include <unistd.h>
 # include "exec.h"
 # include "parse.h"

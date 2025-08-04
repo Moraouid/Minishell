@@ -64,10 +64,9 @@ int							open_in(int *fd, char *filename);
 int							is_not_found(t_shell *shell, t_command *cur_cmd,
 								char **full_path);
 char						**convert_env(t_shell *shell, t_gc_node **gc);
-char						*find_bin(char *arg, t_env *env, t_gc_node **gc,
-								int *f_err);
+char						*find_bin(t_shell *shell, char *arg, t_env *env);
 int							is_dir(char *full_path);
-int							dir_perm(char *full_path, t_shell *shell);
+int							check_perm(char *full_path, t_shell *shell);
 void						exec_child(t_shell *shell, t_command *cur_cmd);
 int							is_builtin(char *cmd);
 int							execute_builtin(t_shell *shell, t_command *cmd);
@@ -84,5 +83,8 @@ int							fork_err(t_command *cur_cmd, int pid, int *pipes);
 void						parent_process(t_command *cmd, int *pipes);
 void						child_process(t_shell *shell, t_command *cmd,
 								int *pipes);
+int							heredoc(t_shell *shell);
+char						*remove_quote_delimiter(t_gc_node **gc, char *str);
+void						clean_exit(int status, t_shell *shell);
 
 #endif

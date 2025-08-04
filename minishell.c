@@ -11,6 +11,9 @@
 /* ************************************************************************** */
 
 #include "includes/minishell.h"
+#include <readline/readline.h>
+#include <signal.h>
+#include <unistd.h>
 
 void	shell_init(t_shell *shell)
 {
@@ -36,10 +39,10 @@ void	shell_init(t_shell *shell)
 //             r = read(fd, buffer, 1337);
 //             pos = 0;
 //             if(r <= 0)
-//                 break;
+//                 break ;
 //         }
 //         if((line[i++] = buffer[pos++]) == '\n')
-//             break;
+//             break ;
 //     }
 //     if(i == 0)
 //     {
@@ -105,7 +108,6 @@ void	shell_init(t_shell *shell)
 // 	free(line);
 // }
 
-
 int	shlvl(t_env *env, t_gc_node **gc)
 {
 	t_env	*sh;
@@ -149,6 +151,20 @@ void	init_env(t_env **env, t_gc_node **gc)
 	my_export(env, a, gc);
 }
 
+void	sighandle(int sig)
+{
+	write(1, "\n", 1);
+    rl_on_new_line();
+	rl_replace_line("", 0);
+	rl_redisplay();
+}
+
+void	setup_signals(void)
+{
+	signal(SIGINT, sighandle);
+	signal(SIGQUIT, SIG_IGN);
+}
+
 int	main(int ac, char **av, char **env)
 {
 	t_shell	shell;
@@ -167,6 +183,7 @@ int	main(int ac, char **av, char **env)
 	while (1337)
 	{
 		shell_init(&shell);
+		setup_signals();
 		shell.r_line = readline("Niggshell~> ");
 		if (!shell.r_line)
 		{

@@ -1,5 +1,5 @@
 SRC_DIRS =  parse builtins helper_utils exec includes/gnl parse/expansions \
-			parse/remove_quotes parse/tokeniziation
+			parse/remove_quotes parse/tokeniziation herdoc
 SRCS =  minishell.c $(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.c))
 OBJS = $(SRCS:.c=.o)
 NAME = minishell

@@ -125,6 +125,8 @@ int	parsing_command(t_shell *shell)
 		return (0);
 	if (!check_syntax_error(shell, shell->tokens))
 		return (0);
+	if (!heredoc(shell))
+		return (0);
 	expansions(shell);
 	remove_quotes(shell);
 	remove_expand_quotes(shell->tokens, shell->r_str, &shell->gc);

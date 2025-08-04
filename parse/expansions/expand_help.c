@@ -15,6 +15,7 @@
 void	init_flag(t_quotes *flag)
 {
 	flag->i = 0;
+    flag->j = 0;
 	flag->rq = 0;
 	flag->sq = 0;
 	flag->dq = 0;

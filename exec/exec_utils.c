@@ -38,7 +38,7 @@ char	**convert_env(t_shell *shell, t_gc_node **gc)
 	return (envp);
 }
 
-char	*find_bin(char *arg, t_env *env, t_gc_node **gc, int *f_err)
+char	*find_bin(t_shell *shell, char *arg, t_env *env)
 {
 	char	*full_path;
 	char	**paths;
@@ -49,15 +49,13 @@ char	*find_bin(char *arg, t_env *env, t_gc_node **gc, int *f_err)
 		return (NULL);
 	path = get_env_value(env, "PATH"); //
 	if (!path || !*path)
-	{
-		*f_err = 1;
-		return (NULL);
-	}
-	paths = ft_split(path, ':', gc);
+		path = ft_strdup(shell->cwd, &shell->gc);
+	paths = ft_split(path, ':', &shell->gc);
 	i = -1;
 	while (paths[++i])
 	{
-		full_path = ft_strjoin(ft_strjoin(paths[i], "/", gc), arg, gc);
+		full_path = ft_strjoin(ft_strjoin(paths[i], "/", &shell->gc), arg,
+				&shell->gc);
 		if (!access(full_path, F_OK))
 			return (full_path);
 	}
@@ -68,55 +66,43 @@ tmp_x_file1 --> permission dinied shoulld appear
 echo $?*/
 int	is_not_found(t_shell *shell, t_command *cur_cmd, char **full_path)
 {
-	int	err;
+	struct stat	statbuf;
 
-	err = 0;
 	if (!*cur_cmd->args[0])
 	{
 		cmd_error(cur_cmd->args[0], NULL, "command not found");
-		gc_clean(&shell->gc);
-		gc_clean(&shell->env_gc);
 		return (1);
 	}
 	if (ft_strchr(cur_cmd->args[0], '/'))
 	{
+		if (stat(cur_cmd->args[0], &statbuf))
+		{
+			cmd_error(cur_cmd->args[0], NULL, strerror(errno));
+			if (errno == ENOENT)
+				clean_exit(127, shell);
+			else
+				clean_exit(126, shell);
+		}
+		if (S_ISDIR(statbuf.st_mode))
+		{
+			cmd_error(*full_path, NULL, "is a directory");
+			clean_exit(126, shell);
+		}
 		*full_path = ft_strdup(cur_cmd->args[0], &shell->gc);
-		err = 1;
 	}
 	else
-		*full_path = find_bin(cur_cmd->args[0], shell->env, &shell->gc, &err);
+		*full_path = find_bin(shell, cur_cmd->args[0], shell->env);
 	if (!*full_path || access(*full_path, F_OK))
 	{
-		if (!err)
-			cmd_error(cur_cmd->args[0], NULL, "command not found");
-		else
-			cmd_error(cur_cmd->args[0], NULL, "No such file or directory");
-		gc_clean(&shell->gc);
-		gc_clean(&shell->env_gc);
+		cmd_error(cur_cmd->args[0], NULL, "command not found");
 		return (1);
 	}
 	return (0);
 }
 
-int	is_dir(char *full_path)
-{
-	struct stat	statbuf;
 
-	if (!stat(full_path, &statbuf))
-		return (S_ISDIR(statbuf.st_mode));
-	return (0);
-}
-
-int	dir_perm(char *full_path, t_shell *shell)
+int	check_perm(char *full_path, t_shell *shell)
 {
-	if (is_dir(full_path))
-	{
-		cmd_error(full_path, NULL, "is a directory");
-		gc_clean(&shell->gc);
-		gc_clean(&shell->env_gc);
-		return (1);
-	}
-	// shoild tragger this error |^
 	if (access(full_path, X_OK))
 	{
 		cmd_error(full_path, NULL, "permission denied");

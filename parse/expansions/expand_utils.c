@@ -11,6 +11,8 @@
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+#include <stdio.h>
+#include <unistd.h>
 
 int	is_expandable(char c)
 {
@@ -30,16 +32,20 @@ int	find_dollar_sign(char *str)
 	}
 	return (0);
 }
-
+// read not protected
 char	*random_str(t_shell *shell)
 {
 	char	buffer[200];
 	char	*r_str;
 
-	int (i), (j), (fd), (b_read);
-	fd = open("/dev/random", O_RDONLY);
-	b_read = read(fd, buffer, 200);
+	int(i), (j), (fd), (b_read);
 	r_str = gc_malloc(&shell->gc, 10);
+	fd = open("/dev/random", O_RDONLY);
+	if (fd < 0)
+		return (perror("Niggshell"), NULL);
+	b_read = read(fd, buffer, 200);
+	if (b_read == -1)
+		return (close(fd), NULL);
 	i = 0;
 	j = 0;
 	while (i < 9)
@@ -47,11 +53,6 @@ char	*random_str(t_shell *shell)
 		if (isalpha(buffer[j]))
 			r_str[i++] = buffer[j];
 		j++;
-		if (j > 200)
-		{
-			j = 0;
-			b_read = read(fd, buffer, 200);
-		}
 	}
 	r_str[i] = '\0';
 	close(fd);
