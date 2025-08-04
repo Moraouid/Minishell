@@ -10,9 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include "../includes/minishell.h"
 
-void heredoc()
-{}
+void	heredoc(t_shell *shell)
+{
 
+}

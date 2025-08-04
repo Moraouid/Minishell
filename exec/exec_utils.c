@@ -1,6 +1,14 @@
-
-
-
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   exec_utils.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: zatais <zatais@student.1337.ma>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/03 11:20:15 by zatais            #+#    #+#             */
+/*   Updated: 2025/08/03 11:20:15 by zatais           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
@@ -37,7 +45,9 @@ char	*find_bin(char *arg, t_env *env, t_gc_node **gc, int *f_err)
 	char	*path;
 	int		i;
 
-	path = get_env_value(env, "PATH");
+	if (!ft_strncmp(arg, "..", 3) || !ft_strncmp(arg, ".", 2))
+		return (NULL);
+	path = get_env_value(env, "PATH"); //
 	if (!path || !*path)
 	{
 		*f_err = 1;
@@ -53,7 +63,9 @@ char	*find_bin(char *arg, t_env *env, t_gc_node **gc, int *f_err)
 	}
 	return (NULL);
 }
-
+/*in case of unset PATH and unset PATH
+tmp_x_file1 --> permission dinied shoulld appear
+echo $?*/
 int	is_not_found(t_shell *shell, t_command *cur_cmd, char **full_path)
 {
 	int	err;
@@ -67,10 +79,10 @@ int	is_not_found(t_shell *shell, t_command *cur_cmd, char **full_path)
 		return (1);
 	}
 	if (ft_strchr(cur_cmd->args[0], '/'))
-    {
+	{
 		*full_path = ft_strdup(cur_cmd->args[0], &shell->gc);
-        err = 1;
-    }
+		err = 1;
+	}
 	else
 		*full_path = find_bin(cur_cmd->args[0], shell->env, &shell->gc, &err);
 	if (!*full_path || access(*full_path, F_OK))
@@ -80,7 +92,7 @@ int	is_not_found(t_shell *shell, t_command *cur_cmd, char **full_path)
 		else
 			cmd_error(cur_cmd->args[0], NULL, "No such file or directory");
 		gc_clean(&shell->gc);
-        gc_clean(&shell->env_gc);
+		gc_clean(&shell->env_gc);
 		return (1);
 	}
 	return (0);
@@ -101,18 +113,16 @@ int	dir_perm(char *full_path, t_shell *shell)
 	{
 		cmd_error(full_path, NULL, "is a directory");
 		gc_clean(&shell->gc);
-        gc_clean(&shell->env_gc);
-        return (1);
+		gc_clean(&shell->env_gc);
+		return (1);
 	}
-    //shoild tragger this error |^
+	// shoild tragger this error |^
 	if (access(full_path, X_OK))
 	{
 		cmd_error(full_path, NULL, "permission denied");
 		gc_clean(&shell->gc);
-        gc_clean(&shell->env_gc);
+		gc_clean(&shell->env_gc);
 		return (1);
 	}
 	return (0);
 }
-
-

@@ -51,30 +51,10 @@ void	cmd_error(char *cmd, char *arg, char *msg)
 	write(2, "\n", 1);
 }
 
-int	is_overflowed(long res, int last_digit, int sign)
-{
-	long	max_threshold;
-	long	min_threshold;
-	int		max_last_digit;
-	int		min_last_digit;
-
-	max_threshold = LONG_MAX / 10;
-	min_threshold = LONG_MIN / 10;
-	max_last_digit = 7;
-	min_last_digit = -8;
-	if (sign == 1 && (res > max_threshold || (res == max_threshold
-				&& last_digit > max_last_digit)))
-		return (1);
-	if (sign == -1 && (res < min_threshold || (res == min_threshold
-				&& last_digit > min_last_digit)))
-		return (1);
-	return (0);
-}
-// work with size_t
-long	ft_atol(char *arg, int *overflow)
+size_t	ft_atol(char *arg, int *overflow)
 {
 	int		sign;
-	long	res;
+	size_t	res;
 	int		digit;
 
 	while ((*arg >= 0 && *arg <= 13) || *arg == 32)
@@ -90,7 +70,7 @@ long	ft_atol(char *arg, int *overflow)
 	while (*arg >= '0' && *arg <= '9')
 	{
 		digit = *arg - 48;
-		if (is_overflowed(res, digit, sign))
+		if (res > LONG_MAX)
 			return (*overflow = 1, LONG_MAX);
 		res = (res * 10) + digit;
 		arg++;

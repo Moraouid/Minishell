@@ -12,7 +12,8 @@
 
 #include "../includes/minishell.h"
 
-void	free_and_update(t_env **prev, t_env **current, t_env **env, t_gc_node **gc)
+void	free_and_update(t_env **prev, t_env **current, t_env **env,
+		t_gc_node **gc)
 {
 	t_env	*temp;
 
@@ -27,7 +28,7 @@ void	free_and_update(t_env **prev, t_env **current, t_env **env, t_gc_node **gc)
 		(*prev)->next = temp->next;
 		*current = (*prev)->next;
 	}
-    gc_remove(gc, temp->value);
+	gc_remove(gc, temp->value);
 	gc_remove(gc, temp);
 }
 
@@ -40,20 +41,19 @@ int	my_unset(t_env **env, char **args, t_gc_node **gc)
 	if (!args || !*args)
 		return (0);
 	i = -1;
-    //chech for invalid like unset -test or +++test and print error
 	while (args[++i])
 	{
 		current = *env;
-    prev = NULL;
+		prev = NULL;
 		while (current)
 		{
 			if (!ft_strncmp(current->value, args[i], ft_strlen(args[i]))
 				&& (current->value[ft_strlen(args[i])] == '='
-				|| current->value[ft_strlen(args[i])] == '\0'))
-            {
+					|| current->value[ft_strlen(args[i])] == '\0'))
+			{
 				free_and_update(&prev, &current, env, gc);
-                break;
-            }
+				break ;
+			}
 			else
 				(1) && (prev = current, current = current->next);
 		}

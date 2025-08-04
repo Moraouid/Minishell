@@ -3,19 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   by: zatais <zatais@student.1337.ma>            +#+  +:+       +#+        */
+/*   By: zatais <zatais@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   created: 2025/07/14 02:38:49 by zatais            #+#    #+#             */
-/*   Updated: 2025/07/20 20:58:42 by zatais           ###   ########.fr       */
+/*   Created: 2025/08/03 19:19:34 by zatais            #+#    #+#             */
+/*   Updated: 2025/08/03 19:19:34 by zatais           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-//
-// unset PATH
-// tmp_x_file1
-// echo $?
 int	execute_builtin(t_shell *shell, t_command *cmd)
 {
 	int	ret;

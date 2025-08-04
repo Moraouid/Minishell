@@ -3,29 +3,29 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: zatais <zatais@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/26 07:54:04 by zatais            #+#    #+#             */
-/*   Updated: 2025/08/03 16:25:33 by sel-abbo         ###   ########.fr       */
+/*   Created: 2025/08/04 07:01:46 by zatais            #+#    #+#             */
+/*   Updated: 2025/08/04 07:01:46 by zatais           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-# include <stdio.h>
-# include <stdlib.h>
-# include "exec.h"
-# include "parse.h"
 # include <errno.h>
 # include <fcntl.h>
 # include <limits.h>
+# include <stdio.h>
+#include <stdlib.h>
 # include <readline/history.h>
 # include <readline/readline.h>
+# include <stdbool.h>
 # include <sys/stat.h>
 # include <sys/wait.h>
 # include <unistd.h>
-# include <stdbool.h>
+# include "exec.h"
+# include "parse.h"
 
 /* ----------------enum of errno--------------- */
 typedef enum e_errno
@@ -122,10 +122,8 @@ typedef struct s_shell
 	char				**envp;
 	char				*r_line;
 	char				*r_str;
-	char				*joined_line;
 	char				*cwd;
 	t_env				*env;
-	t_env				*s_env;
 	t_token				*tokens;
 	t_gc_node			*gc;
 	t_gc_node			*env_gc;

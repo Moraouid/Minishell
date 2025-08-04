@@ -12,7 +12,7 @@
 
 #include "../includes/minishell.h"
 
-static	int	w_counter(char *s, char c)
+static int	w_counter(char *s, char c)
 {
 	int	count;
 	int	i;
@@ -31,7 +31,7 @@ static	int	w_counter(char *s, char c)
 	return (count);
 }
 
-static	int	w_len(char *s, char c)
+static int	w_len(char *s, char c)
 {
 	int	len;
 
@@ -41,7 +41,7 @@ static	int	w_len(char *s, char c)
 	return (len);
 }
 
-static	char	*extract_w(char *s, int len, t_gc_node **gc)
+static char	*extract_w(char *s, int len, t_gc_node **gc)
 {
 	char	*word;
 	int		i;
@@ -57,7 +57,7 @@ static	char	*extract_w(char *s, int len, t_gc_node **gc)
 	return (word);
 }
 
-void fill_res(char *s, char c, char **res, t_gc_node **gc)
+void	fill_res(char *s, char c, char **res, t_gc_node **gc)
 {
 	int	idx;
 	int	len;

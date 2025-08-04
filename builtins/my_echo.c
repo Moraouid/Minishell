@@ -14,11 +14,10 @@
 
 void	print_args(char **args, int flag, int start, int spaces)
 {
-    //issue in spacing echo -n  -n -n -n 42
 	while (args[start])
 	{
 		ft_putstr_fd(args[start], 1);
-		if (spaces--)
+		if (spaces-- > 0)
 			write(1, " ", 1);
 		start++;
 	}
@@ -61,7 +60,7 @@ int	my_echo(char **args)
 	flag = 0;
 	while (args[++i] && check_flag(args[i]))
 		flag = 1;
-	spaces = args_counter(args) - 1 - flag;
+	spaces = args_counter(args) - i - 1;
 	print_args(args, flag, i, spaces);
 	return (0);
 }

@@ -37,11 +37,11 @@ int	exit_status(char *status, int *exit)
 
 void	exit_all(int status, t_shell *shell, int count)
 {
-    if (count == 1)
-    {
-        close(shell->stdin_fd);
-        close(shell->stdout_fd);
-    }
+	if (count == 1)
+	{
+		close(shell->stdin_fd);
+		close(shell->stdout_fd);
+	}
 	gc_clean(&shell->env_gc);
 	gc_clean(&shell->gc);
 	exit(status);
@@ -65,7 +65,7 @@ int	my_exit(char **args, t_shell *shell)
 	{
 		cmd_error("exit", args[0], "numeric argument required");
 		exit_all(2, shell, cmd_count);
-	};
+	}
 	if (n > 1)
 		return (cmd_error("exit", NULL, "too many arguments"), 1);
 	exit_all(status, shell, cmd_count);

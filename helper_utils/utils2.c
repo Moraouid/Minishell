@@ -12,7 +12,6 @@
 
 #include "../includes/minishell.h"
 
-
 size_t	ft_strlen(char *s)
 {
 	int	i;
@@ -43,6 +42,7 @@ char	*ft_strjoin(char *s1, char *s2, t_gc_node **gc)
 	res[i] = '\0';
 	return (res);
 }
+
 char	*ft_strndup(char *s, size_t n, t_gc_node **gc)
 {
 	char	*res;
@@ -58,6 +58,7 @@ char	*ft_strndup(char *s, size_t n, t_gc_node **gc)
 	res[i] = '\0';
 	return (res);
 }
+
 char	*ft_strdup(char *s, t_gc_node **gc)
 {
 	size_t	len;
@@ -77,6 +78,7 @@ char	*ft_strdup(char *s, t_gc_node **gc)
 	dup[i] = '\0';
 	return (dup);
 }
+
 char	*ft_substr(char *s, unsigned int start, size_t len, t_gc_node **gc)
 {
 	char	*sub;

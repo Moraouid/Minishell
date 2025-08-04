@@ -27,7 +27,7 @@ void						ft_putendl_fd(char *s, int fd);
 void						cmd_error(char *cmd_name, char *error_arg,
 								char *error_msg);
 int							args_counter(char **args);
-long						ft_atol(char *arg, int *overflow);
+size_t						ft_atol(char *arg, int *overflow);
 int							is_space(char c);
 int							ft_strncmp(char *s1, char *s2, size_t n);
 int							copy_env(char **envp, t_env **env, t_gc_node **gc);

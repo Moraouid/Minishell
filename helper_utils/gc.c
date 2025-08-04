@@ -36,7 +36,7 @@ void	gc_add(t_gc_node **gc, void *ptr)
 	if (!node)
 	{
 		write(2, "Niggshell: gc_add malloc failed\n", 31);
-    gc_clean(gc);
+		gc_clean(gc);
 		exit(1);
 	}
 	node->ptr = ptr;

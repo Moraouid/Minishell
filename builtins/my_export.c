@@ -62,12 +62,12 @@ int	handle_export_args(t_env **env, char **args, t_gc_node **gc)
 	ret = 0;
 	i = -1;
 	while (args[++i])
-    {
-        if (!process_argument(env, args[i], gc))
+	{
+		if (!process_argument(env, args[i], gc))
 			ret = 2;
-        else 
-            ret = 0;
-    }
+		else
+			ret = 0;
+	}
 	return (ret);
 }
 
