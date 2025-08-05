@@ -17,6 +17,7 @@ typedef struct s_shell			t_shell;
 typedef struct s_token			t_token;
 typedef struct s_command		t_command;
 typedef struct s_quotes_flag	t_quotes;
+typedef struct s_gc_node        t_gc_node;
 typedef struct s_gc_node		t_gc_node;
 typedef enum e_errno			t_errno;
 typedef enum e_token_status		t_token_status;
@@ -25,6 +26,7 @@ typedef enum e_token_status		t_token_status;
 
 int								is_space(char c);
 int								find_dollar_sign(char *str);
+int								get_signal_index(int state);
 int								isredirction(t_token *token);
 int								is_operator(char *str, int i);
 int								tokeniziation(t_shell *shell);
@@ -43,6 +45,8 @@ char							*allocate_word(t_shell *shell, char *r_line,
 									int *i);
 char							*ft_substr(char *s, unsigned int start,
 									size_t len, t_gc_node **gc);
+void							sighandle(int sig);
+void							setup_signals(void);
 void							init_flag(t_quotes *flag);
 void							expansions(t_shell *shell);
 void							shell_init(t_shell *shell);
@@ -64,5 +68,5 @@ t_token							*creat_node_cmd(t_shell *shell, char *value,
 t_command						*split_commands(t_token *tokens);
 t_token_status					update_quote_status(t_token_status status,
 									char c);
-
+int								get_signal_index(int state);
 #endif

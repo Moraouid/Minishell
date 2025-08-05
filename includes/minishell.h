@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zatais <zatais@student.1337.ma>            +#+  +:+       +#+        */
+/*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/04 07:01:46 by zatais            #+#    #+#             */
-/*   Updated: 2025/08/04 07:01:46 by zatais           ###   ########.fr       */
+/*   Created: 2025/07/26 07:54:04 by zatais            #+#    #+#             */
+/*   Updated: 2025/08/03 16:25:33 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,18 +16,17 @@
 # include <errno.h>
 # include <fcntl.h>
 # include <limits.h>
-# include <stdio.h>
-# include <stdlib.h>
 # include <readline/history.h>
 # include <readline/readline.h>
+# include <signal.h>
 # include <stdbool.h>
-# include <sys/stat.h>
+# include <stdio.h>
+# include <stdlib.h>
 # include <sys/wait.h>
-#include <signal.h>
+# include <sys/stat.h>
 # include <unistd.h>
 # include "exec.h"
 # include "parse.h"
-
 /* ----------------enum of errno--------------- */
 typedef enum e_errno
 {

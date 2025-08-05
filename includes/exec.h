@@ -61,12 +61,12 @@ int							cmd_counter(t_command *cmd);
 void						restore_stds(int stdin, int stdout);
 int							redirect(t_redir *rd);
 int							open_in(int *fd, char *filename);
-int							is_not_found(t_shell *shell, t_command *cur_cmd,
+void						is_not_found(t_shell *shell, t_command *cur_cmd,
 								char **full_path);
 char						**convert_env(t_shell *shell, t_gc_node **gc);
 char						*find_bin(t_shell *shell, char *arg, t_env *env);
 int							is_dir(char *full_path);
-int							check_perm(char *full_path, t_shell *shell);
+void						check_perm(char *full_path, t_shell *shell);
 void						exec_child(t_shell *shell, t_command *cur_cmd);
 int							is_builtin(char *cmd);
 int							execute_builtin(t_shell *shell, t_command *cmd);

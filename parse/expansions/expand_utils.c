@@ -11,8 +11,6 @@
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
-#include <stdio.h>
-#include <unistd.h>
 
 int	is_expandable(char c)
 {
@@ -53,6 +51,11 @@ char	*random_str(t_shell *shell)
 		if (isalpha(buffer[j]))
 			r_str[i++] = buffer[j];
 		j++;
+		if (j > 200)
+		{
+			j = 0;
+			b_read = read(fd, buffer, 200);
+		}
 	}
 	r_str[i] = '\0';
 	close(fd);

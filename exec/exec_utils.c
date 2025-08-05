@@ -47,7 +47,7 @@ char	*find_bin(t_shell *shell, char *arg, t_env *env)
 
 	if (!ft_strncmp(arg, "..", 3) || !ft_strncmp(arg, ".", 2))
 		return (NULL);
-	path = get_env_value(env, "PATH"); //
+	path = get_env_value(env, "PATH");
 	if (!path || !*path)
 		path = ft_strdup(shell->cwd, &shell->gc);
 	paths = ft_split(path, ':', &shell->gc);
@@ -64,30 +64,36 @@ char	*find_bin(t_shell *shell, char *arg, t_env *env)
 /*in case of unset PATH and unset PATH
 tmp_x_file1 --> permission dinied shoulld appear
 echo $?*/
-int	is_not_found(t_shell *shell, t_command *cur_cmd, char **full_path)
+
+void	check_dir(t_shell *shell, t_command *cur_cmd)
 {
 	struct stat	statbuf;
 
+	if (stat(cur_cmd->args[0], &statbuf))
+	{
+		cmd_error(cur_cmd->args[0], NULL, strerror(errno));
+		if (errno == ENOENT)
+			clean_exit(127, shell);
+		else
+			clean_exit(126, shell);
+	}
+	if (S_ISDIR(statbuf.st_mode))
+	{
+		cmd_error(cur_cmd->args[0], NULL, "is a directory");
+		clean_exit(126, shell);
+	}
+}
+
+void	is_not_found(t_shell *shell, t_command *cur_cmd, char **full_path)
+{
 	if (!*cur_cmd->args[0])
 	{
 		cmd_error(cur_cmd->args[0], NULL, "command not found");
-		return (1);
+		clean_exit(1, shell);
 	}
 	if (ft_strchr(cur_cmd->args[0], '/'))
 	{
-		if (stat(cur_cmd->args[0], &statbuf))
-		{
-			cmd_error(cur_cmd->args[0], NULL, strerror(errno));
-			if (errno == ENOENT)
-				clean_exit(127, shell);
-			else
-				clean_exit(126, shell);
-		}
-		if (S_ISDIR(statbuf.st_mode))
-		{
-			cmd_error(*full_path, NULL, "is a directory");
-			clean_exit(126, shell);
-		}
+        check_dir(shell, cur_cmd);
 		*full_path = ft_strdup(cur_cmd->args[0], &shell->gc);
 	}
 	else
@@ -95,20 +101,16 @@ int	is_not_found(t_shell *shell, t_command *cur_cmd, char **full_path)
 	if (!*full_path || access(*full_path, F_OK))
 	{
 		cmd_error(cur_cmd->args[0], NULL, "command not found");
-		return (1);
+		clean_exit(127, shell);
 	}
-	return (0);
 }
-
-
-int	check_perm(char *full_path, t_shell *shell)
+// permission check
+//  only
+void	check_perm(char *full_path, t_shell *shell)
 {
 	if (access(full_path, X_OK))
 	{
 		cmd_error(full_path, NULL, "permission denied");
-		gc_clean(&shell->gc);
-		gc_clean(&shell->env_gc);
-		return (1);
+		clean_exit(126, shell);
 	}
-	return (0);
 }

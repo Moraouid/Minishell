@@ -54,10 +54,8 @@ void	exec_child(t_shell *shell, t_command *cur_cmd)
 	}
 	if (!cur_cmd->args[0])
 		clean_exit(0, shell);
-	if (is_not_found(shell, cur_cmd, &full_path))
-		clean_exit(127, shell);
-	if (check_perm(full_path, shell))
-		clean_exit(126, shell);
+	is_not_found(shell, cur_cmd, &full_path);
+	check_perm(full_path, shell);
 	env_array = convert_env(shell, &shell->gc);
 	execve(full_path, cur_cmd->args, env_array);
 	cmd_error(full_path, NULL, strerror(errno));

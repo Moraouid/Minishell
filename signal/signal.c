@@ -1,30 +1,47 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   my_utils3.c                                        :+:      :+:    :+:   */
+/*   signal.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/03 06:22:29 by zatais            #+#    #+#             */
-/*   Updated: 2025/08/03 16:12:00 by sel-abbo         ###   ########.fr       */
+/*   Created: 2025/08/05 07:02:02 by sel-abbo          #+#    #+#             */
+/*   Updated: 2025/08/05 07:02:02 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
 
-void	cmd_error2(char *arg)
+int	get_signal_index(int state)
 {
-	ft_putstr_fd("Niggshell: export: `", 2);
-	ft_putstr_fd(arg, 2);
-	ft_putstr_fd("': not a valid identifier\n", 2);
+	static int	data;
+
+	if (state != -1)
+		data = state;
+	return (data);
 }
 
-int	create_new_node(t_env **env, char *arg, t_gc_node **gc)
+void	sighandle(int sig)
 {
-	t_env	*new_node;
-
-	new_node = create_node(arg, gc);
-	add_back(env, new_node);
-	return (0);
+	(void)sig;
+	if (get_signal_index(-1) == 0)
+	{
+		write(1, "\n", 1);
+		rl_on_new_line();
+		rl_replace_line("", 0);
+		rl_redisplay();
+	}
+	else if (get_signal_index(-1) == 1)
+	{
+		write(1, "\n", 1);
+		exit(130);
+	}
 }
+
+void setup_signals(void)
+{
+	signal(SIGINT, sighandle);
+	signal(SIGQUIT, SIG_IGN);
+}
+
