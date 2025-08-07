@@ -1,0 +1,106 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   debug.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/07 18:05:36 by sel-abbo          #+#    #+#             */
+/*   Updated: 2025/08/07 18:05:36 by sel-abbo         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "includes/minishell.h"
+
+void	print_tokens(t_shell *shell)
+{
+	t_token	*current;
+	char	*type_str;
+
+	current = shell->tokens;
+	printf("\nTokens:\n-----------------\n");
+	while (current)
+	{
+		if (current->type == WORD)
+			type_str = "WORD";
+		else if (current->type == PIPE)
+			type_str = "PIPE";
+		else if (current->type == INPUT)
+			type_str = "INPUT";
+		else if (current->type == OUTPUT)
+			type_str = "OUTPUT";
+		else if (current->type == HEREDOC)
+			type_str = "HEREDOC";
+		else if (current->type == APPEND)
+			type_str = "APPEND";
+		else if (current->type == SPACES)
+			type_str = "SPACES";
+		else if (current->type == AMBGUS)
+			type_str = "AMBGUS";
+		printf("[%-6s] = %s\n", type_str, current->value);
+		current = current->next;
+	}
+	printf("-----------------\n");
+}
+
+const char	*get_redir_type_string(int type)
+{
+	if (type == INPUT)
+		return ("REDIR_IN");
+	else if (type == OUTPUT)
+		return ("REDIR_OUT");
+	else if (type == APPEND)
+		return ("APPEND");
+	else if (type == HEREDOC)
+		return ("HEREDOC");
+	return ("UNKNOWN");
+}
+
+void	print_redirs_fancy(t_redir *redir)
+{
+	while (redir)
+	{
+		printf("    └─🔁 Redirection\n");
+		printf("       ├─ Type      : %s\n",
+			get_redir_type_string(redir->type));
+		printf("       ├─ Target    : %s\n",
+			redir->target ? redir->target : "(null)");
+		printf("       └─ HereDoc   : %s\n",
+			redir->h_filename ? redir->h_filename : "(null)");
+		redir = redir->next;
+	}
+}
+
+void	print_commands(t_command *cmd)
+{
+	while (cmd)
+	{
+		printf("  ├─ Args: ");
+		if (cmd->args && cmd->args[0])
+		{
+			for (int i = 0; cmd->args[i]; i++)
+			{
+				printf("%s", cmd->args[i]);
+				if (cmd->args[i + 1])
+					printf(" ");
+			}
+			printf("\n");
+		}
+		else
+		{
+			printf("  ├─ Args   : (null)\n");
+		}
+		if (cmd->redirs)
+		{
+			printf("  └─ Redirections:\n");
+			print_redirs_fancy(cmd->redirs);
+		}
+		else
+		{
+			printf("  └─ Redirections: (none)\n");
+		}
+		if (cmd->next)
+			printf("    ↓\n");
+		cmd = cmd->next;
+	}
+}

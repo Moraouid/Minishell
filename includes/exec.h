@@ -19,7 +19,6 @@ typedef struct s_gc_node	t_gc_node;
 typedef struct s_redir		t_redir;
 typedef struct s_command	t_command;
 
-//??
 size_t						ft_strlen(char *s);
 void						ft_putstr_fd(char *s, int fd);
 int							my_echo(char **args);
@@ -86,5 +85,6 @@ void						child_process(t_shell *shell, t_command *cmd,
 int							heredoc(t_shell *shell);
 char						*remove_quote_delimiter(t_gc_node **gc, char *str);
 void						clean_exit(int status, t_shell *shell);
+t_shell						*get_shell(t_shell *shell);
 
 #endif

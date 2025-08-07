@@ -116,13 +116,14 @@ typedef struct s_gc_node
 /* ---------------struct of shell-------------- */
 typedef struct s_shell
 {
-	int					last_exit_status;
+    int					stdin_fd;
 	int					stdout_fd;
-	int					stdin_fd;
-	char				**envp;
-	char				*r_line;
+    int                 herdoc_fd;
+    int					last_exit_status;
+    char				*cwd;
+    char				**envp;
 	char				*r_str;
-	char				*cwd;
+    char				*r_line;
 	t_env				*env;
 	t_token				*tokens;
 	t_gc_node			*gc;

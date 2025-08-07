@@ -93,7 +93,7 @@ void	is_not_found(t_shell *shell, t_command *cur_cmd, char **full_path)
 	}
 	if (ft_strchr(cur_cmd->args[0], '/'))
 	{
-        check_dir(shell, cur_cmd);
+		check_dir(shell, cur_cmd);
 		*full_path = ft_strdup(cur_cmd->args[0], &shell->gc);
 	}
 	else
@@ -106,6 +106,7 @@ void	is_not_found(t_shell *shell, t_command *cur_cmd, char **full_path)
 }
 // permission check
 //  only
+
 void	check_perm(char *full_path, t_shell *shell)
 {
 	if (access(full_path, X_OK))

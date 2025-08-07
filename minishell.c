@@ -54,6 +54,7 @@ void	init_env(t_shell *shell, t_env **env, t_gc_node **gc)
 	a[5] = NULL;
 	my_export(env, a, gc);
 }
+
 void	initialize_shell(t_shell *shell, char **env)
 {
 	char	*pwd;
@@ -72,6 +73,8 @@ void	initialize_shell(t_shell *shell, char **env)
 		shell->cwd = pwd;
 		gc_add(&shell->env_gc, pwd);
 	}
+    shell->herdoc_fd = -1;
+	get_shell(shell);
 }
 
 int	main(int ac, char **av, char **env)
@@ -83,21 +86,20 @@ int	main(int ac, char **av, char **env)
 	initialize_shell(&shell, env);
 	while (1337)
 	{
-        setup_signals();
-        get_signal_index(0);
+		shell.tokens = NULL;
+		shell.cmd = NULL;
+		setup_signals();
+		get_signal_index(0);
 		shell.r_line = readline("Niggshell~> ");
 		if (!shell.r_line)
 		{
 			ft_putstr_fd("exit\n", 2);
 			break ;
 		}
-		if (ft_strlen(shell.r_line))
-		{
-			add_history(shell.r_line);
-			gc_add(&shell.gc, shell.r_line);
-			if (parsing_command(&shell))
-				start_exec(&shell);
-		}
+		add_history(shell.r_line);
+		gc_add(&shell.gc, shell.r_line);
+		if (parsing_command(&shell))
+			start_exec(&shell);
 		gc_clean(&shell.gc);
 	}
 	clean_exit(0, &shell);

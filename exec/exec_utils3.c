@@ -42,6 +42,8 @@ void	parent_process(t_command *cmd, int *pipes)
 
 void	child_process(t_shell *shell, t_command *cmd, int *pipes)
 {
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
 	if (pipes[0] != -1)
 	{
 		dup2(pipes[0], STDIN_FILENO);

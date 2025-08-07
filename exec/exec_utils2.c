@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "../includes/minishell.h"
+#include <unistd.h>
 
 int	is_builtin(char *cmd)
 {
@@ -35,7 +36,9 @@ int	cmd_counter(t_command *cmd)
 
 void	clean_exit(int status, t_shell *shell)
 {
-	gc_clean(&shell->gc);
+	if (shell->herdoc_fd != -1)
+        close(shell->herdoc_fd);
+    gc_clean(&shell->gc);
 	gc_clean(&shell->env_gc);
 	exit(status);
 }

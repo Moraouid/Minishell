@@ -11,6 +11,9 @@
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+#include <readline/history.h>
+#include <signal.h>
+#include <stdlib.h>
 
 int	execute_builtin(t_shell *shell, t_command *cmd)
 {
@@ -52,6 +55,10 @@ void	wait_all(t_shell *shell, int *pids, int count)
 		shell->last_exit_status = WEXITSTATUS(last_status);
 	else if (WIFSIGNALED(last_status))
 		shell->last_exit_status = 128 + WTERMSIG(last_status);
+	if (WTERMSIG(last_status) == SIGQUIT)
+		write(1, "Quite\n", 6);
+	else if (WTERMSIG(last_status) == SIGINT)
+		write(1, "\n", 1);
 }
 
 int	setup_pipe(t_command *cmd, int *pipes)
@@ -85,6 +92,7 @@ void	exec_pipeline(t_shell *shell, int count)
 	{
 		if (!setup_pipe(cur_cmd, pipes))
 			break ;
+		signal(SIGINT, SIG_IGN);
 		pids[++i] = fork();
 		if (fork_err(cur_cmd, pids[i], pipes))
 			break ;

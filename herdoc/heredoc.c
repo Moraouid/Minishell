@@ -6,12 +6,13 @@
 /*   By: zatais <zatais@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 08:29:31 by zatais            #+#    #+#             */
-/*   Updated: 2025/08/05 14:41:16 by sel-abbo         ###   ########.fr       */
+/*   Updated: 2025/08/07 18:54:59 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 #include <signal.h>
+#include <unistd.h>
 
 char	*generate_filename(t_shell *shell)
 {
@@ -23,7 +24,7 @@ char	*generate_filename(t_shell *shell)
 	while (++i < 9)
 	{
 		rand_str = random_str(shell);
-		filename = ft_strjoin("/tmp/minishell_heredoc_", rand_str, &shell->gc);
+		filename = ft_strjoin("/tmp/.heredoc_", rand_str, &shell->gc);
 		if (access(filename, F_OK))
 			return (filename);
 	}
@@ -50,7 +51,7 @@ char	*expand_var_heredoc(t_shell *shell, char *line)
 			while (line[i] && line[i] != '$')
 				i++;
 			sub = ft_substr(line, start, i - start, &shell->gc);
-            res = ft_strjoin(res, sub, &shell->gc);
+			res = ft_strjoin(res, sub, &shell->gc);
 		}
 	}
 	return (res);
@@ -133,8 +134,6 @@ int	handle_heredoc_child(t_shell *shell, t_token *d, int fd, int exp)
 		close(fd);
 		clean_exit(0, shell);
 	}
-	get_signal_index(0);
-	setup_signals();
 	return (pid);
 }
 
@@ -146,11 +145,13 @@ int	process_heredoc(t_shell *shell, t_token *delim)
 	int		status;
 	int		expand;
 
-	expand = (!ft_strchr(delim->value, '"') || !ft_strchr(delim->value, '\''));
-	delim->value = remove_quote_delimiter(&shell->gc, delim->value);
+	expand = (!ft_strchr(delim->value, '"') && !ft_strchr(delim->value, '\''));
+    if(!expand)
+	    delim->value = remove_quote_delimiter(&shell->gc, delim->value);
 	if (!setup_heredoc_file(&filename, shell))
 		return (0);
-	fd = open(filename, O_CREAT | O_WRONLY | O_TRUNC, 0600);
+	fd = open(filename, O_CREAT | O_WRONLY, 0600);
+    shell->herdoc_fd = fd;// reset to -1
 	if (fd < 0)
 		return (perror("Niggshell: heredoc: open failed"), 0);
 	pid = handle_heredoc_child(shell, delim, fd, expand);
@@ -159,7 +160,10 @@ int	process_heredoc(t_shell *shell, t_token *delim)
 	{
 		shell->last_exit_status = WEXITSTATUS(status);
 		if (shell->last_exit_status == 130)
-			return (0);
+        {
+            close(fd);
+            return (0);
+        }
 	}
 	close(fd);
 	delim->value = filename;

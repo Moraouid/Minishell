@@ -12,7 +12,6 @@
 
 #include "../includes/minishell.h"
 
-
 void	cmd_error2(char *arg)
 {
 	ft_putstr_fd("Niggshell: export: `", 2);

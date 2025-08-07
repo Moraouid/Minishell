@@ -6,7 +6,7 @@
 /*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 16:42:17 by sel-abbo          #+#    #+#             */
-/*   Updated: 2025/08/03 16:45:42 by sel-abbo         ###   ########.fr       */
+/*   Updated: 2025/08/07 18:52:09 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 void	init_flag(t_quotes *flag)
 {
 	flag->i = 0;
-    flag->j = 0;
+	flag->j = 0;
 	flag->rq = 0;
 	flag->sq = 0;
 	flag->dq = 0;

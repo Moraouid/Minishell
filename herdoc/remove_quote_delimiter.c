@@ -6,7 +6,7 @@
 /*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 10:14:17 by sel-abbo          #+#    #+#             */
-/*   Updated: 2025/08/04 10:14:17 by sel-abbo         ###   ########.fr       */
+/*   Updated: 2025/08/07 18:54:25 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,6 @@ char	*remove_quote_delimiter(t_gc_node **gc, char *str)
 		else
 			res[j++] = str[i++];
 	}
-    res[j] = '\0';
+	res[j] = '\0';
 	return (res);
 }
-

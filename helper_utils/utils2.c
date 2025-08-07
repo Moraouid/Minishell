@@ -79,11 +79,11 @@ char	*ft_strdup(char *s, t_gc_node **gc)
 	return (dup);
 }
 
-char	*ft_substr(char *s, unsigned int start, size_t len, t_gc_node **gc)
+char	*ft_substr(char *s, int start, int len, t_gc_node **gc)
 {
 	char	*sub;
-	size_t	i;
-	size_t	s_len;
+	int		i;
+	int		s_len;
 
 	s_len = ft_strlen(s);
 	if (start >= s_len)
