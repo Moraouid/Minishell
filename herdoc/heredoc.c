@@ -6,13 +6,11 @@
 /*   By: zatais <zatais@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 08:29:31 by zatais            #+#    #+#             */
-/*   Updated: 2025/08/07 18:54:59 by sel-abbo         ###   ########.fr       */
+/*   Updated: 2025/08/08 11:40:00 by zatais           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
-#include <signal.h>
-#include <unistd.h>
 
 char	*generate_filename(t_shell *shell)
 {
@@ -29,87 +27,6 @@ char	*generate_filename(t_shell *shell)
 			return (filename);
 	}
 	return (NULL);
-}
-
-char	*expand_var_heredoc(t_shell *shell, char *line)
-{
-	int		i;
-	int		start;
-	char	*res;
-	char	*sub;
-
-	i = 0;
-	shell->r_str = ft_strdup("", &shell->gc);
-	res = ft_strdup("", &shell->gc);
-	while (line[i])
-	{
-		if (line[i] == '$')
-			expand_variable(line, &i, shell, &res);
-		else
-		{
-			start = i;
-			while (line[i] && line[i] != '$')
-				i++;
-			sub = ft_substr(line, start, i - start, &shell->gc);
-			res = ft_strjoin(res, sub, &shell->gc);
-		}
-	}
-	return (res);
-}
-
-void	heredoc_error(char *delimiter)
-{
-	ft_putstr_fd("Niggshell: warning: ", 2);
-	ft_putstr_fd("here-document delimited by end-of-file", 2);
-	ft_putstr_fd(" (wanted `", 2);
-	ft_putstr_fd(delimiter, 2);
-	ft_putstr_fd("')\n", 2);
-}
-
-void	write_line(int fd, char *line)
-{
-	write(fd, line, ft_strlen(line));
-	write(fd, "\n", 1);
-}
-
-void	process_line(t_shell *shell, int fd, char *line, int expand)
-{
-	char	*expanded;
-
-	if (expand)
-	{
-		if (find_dollar_sign(line))
-		{
-			expanded = expand_var_heredoc(shell, line);
-			write_line(fd, expanded);
-		}
-		else
-			write_line(fd, line);
-	}
-	else
-		write_line(fd, line);
-}
-
-void	write_to_tmp(t_shell *shell, char *delimiter, int fd, int expand)
-{
-	char	*line;
-
-	while (1)
-	{
-		line = readline("heredoc> ");
-		if (!line)
-		{
-			heredoc_error(delimiter);
-			break ;
-		}
-		if (!ft_strcmp(delimiter, line))
-		{
-			free(line);
-			break ;
-		}
-		process_line(shell, fd, line, expand);
-		free(line);
-	}
 }
 
 int	setup_heredoc_file(char **filename, t_shell *shell)
@@ -146,24 +63,25 @@ int	process_heredoc(t_shell *shell, t_token *delim)
 	int		expand;
 
 	expand = (!ft_strchr(delim->value, '"') && !ft_strchr(delim->value, '\''));
-    if(!expand)
-	    delim->value = remove_quote_delimiter(&shell->gc, delim->value);
+	if (!expand)
+		delim->value = remove_quote_delimiter(&shell->gc, delim->value);
 	if (!setup_heredoc_file(&filename, shell))
 		return (0);
 	fd = open(filename, O_CREAT | O_WRONLY, 0600);
-    shell->herdoc_fd = fd;// reset to -1
+	shell->herdoc_fd = fd;
 	if (fd < 0)
 		return (perror("Niggshell: heredoc: open failed"), 0);
 	pid = handle_heredoc_child(shell, delim, fd, expand);
 	waitpid(pid, &status, 0);
+	///
 	if (WIFEXITED(status))
 	{
 		shell->last_exit_status = WEXITSTATUS(status);
 		if (shell->last_exit_status == 130)
-        {
-            close(fd);
-            return (0);
-        }
+		{
+			close(fd);
+			return (0);
+		}
 	}
 	close(fd);
 	delim->value = filename;

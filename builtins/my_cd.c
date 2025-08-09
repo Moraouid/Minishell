@@ -101,7 +101,12 @@ int	my_cd(t_shell *shell, char **args)
 		return (cmd_error("cd", path, strerror(errno)), 1);
 	new = getcwd(NULL, 0);
 	if (!new)
-		new = ft_strdup(path, &shell->gc);
+	{
+		cmd_error("cd",
+			"error retrieving current directory: getcwd: cannot access parent directories",
+			"No such file or directory");
+		new = oldpwd;
+	}
 	else
 		gc_add(&shell->gc, new);
 	if (print)

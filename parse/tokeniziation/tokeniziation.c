@@ -6,11 +6,12 @@
 /*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/24 03:57:54 by sel-abbo          #+#    #+#             */
-/*   Updated: 2025/08/03 17:44:29 by sel-abbo         ###   ########.fr       */
+/*   Updated: 2025/08/08 11:52:21 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+#include <unistd.h>
 
 t_token	*handle_operator(t_shell *shell, int *i, int type)
 {
@@ -74,6 +75,7 @@ int	tokeniziation(t_shell *shell)
 	int		type;
 	t_token	*n_token;
 
+	shell->tokens = NULL;
 	if (!check_quots(shell, shell->r_line))
 		return (0);
 	i = 0;

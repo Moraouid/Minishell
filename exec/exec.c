@@ -6,7 +6,7 @@
 /*   By: zatais <zatais@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 19:19:34 by zatais            #+#    #+#             */
-/*   Updated: 2025/08/03 19:19:34 by zatais           ###   ########.fr       */
+/*   Updated: 2025/08/08 10:12:16 by zatais           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,13 +42,20 @@ void	wait_all(t_shell *shell, int *pids, int count)
 	int	j;
 	int	status;
 	int	last_status;
+	int	err_flag;
 
 	j = 0;
+	err_flag = 0;
 	while (j < count)
 	{
 		waitpid(pids[j], &status, 0);
 		if (j == count - 1)
 			last_status = status;
+		if (WTERMSIG(status) == SIGINT && !err_flag)
+		{
+			err_flag = 1;
+			write(1, "\n", 1);
+		}
 		j++;
 	}
 	if (WIFEXITED(last_status))
@@ -56,9 +63,7 @@ void	wait_all(t_shell *shell, int *pids, int count)
 	else if (WIFSIGNALED(last_status))
 		shell->last_exit_status = 128 + WTERMSIG(last_status);
 	if (WTERMSIG(last_status) == SIGQUIT)
-		write(1, "Quite\n", 6);
-	else if (WTERMSIG(last_status) == SIGINT)
-		write(1, "\n", 1);
+		write(1, "Quit (core dumped)\n", 19);
 }
 
 int	setup_pipe(t_command *cmd, int *pipes)

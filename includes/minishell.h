@@ -22,8 +22,8 @@
 # include <stdbool.h>
 # include <stdio.h>
 # include <stdlib.h>
-# include <sys/wait.h>
 # include <sys/stat.h>
+# include <sys/wait.h>
 # include <unistd.h>
 # include "exec.h"
 # include "parse.h"
@@ -116,14 +116,14 @@ typedef struct s_gc_node
 /* ---------------struct of shell-------------- */
 typedef struct s_shell
 {
-    int					stdin_fd;
+	int					stdin_fd;
 	int					stdout_fd;
-    int                 herdoc_fd;
-    int					last_exit_status;
-    char				*cwd;
-    char				**envp;
+	int					herdoc_fd;
+	int					last_exit_status;
+	char				*cwd;
+	char				**envp;
 	char				*r_str;
-    char				*r_line;
+	char				*r_line;
 	t_env				*env;
 	t_token				*tokens;
 	t_gc_node			*gc;

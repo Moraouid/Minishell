@@ -6,7 +6,7 @@
 /*   By: zatais <zatais@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 13:16:13 by zatais            #+#    #+#             */
-/*   Updated: 2025/07/29 13:16:13 by zatais           ###   ########.fr       */
+/*   Updated: 2025/08/08 10:08:50 by zatais           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "../includes/minishell.h"
@@ -37,8 +37,8 @@ int	cmd_counter(t_command *cmd)
 void	clean_exit(int status, t_shell *shell)
 {
 	if (shell->herdoc_fd != -1)
-        close(shell->herdoc_fd);
-    gc_clean(&shell->gc);
+		close(shell->herdoc_fd);
+	gc_clean(&shell->gc);
 	gc_clean(&shell->env_gc);
 	exit(status);
 }

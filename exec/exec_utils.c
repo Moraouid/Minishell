@@ -6,7 +6,7 @@
 /*   By: zatais <zatais@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 11:20:15 by zatais            #+#    #+#             */
-/*   Updated: 2025/08/03 11:20:15 by zatais           ###   ########.fr       */
+/*   Updated: 2025/08/08 10:08:41 by zatais           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,9 +61,6 @@ char	*find_bin(t_shell *shell, char *arg, t_env *env)
 	}
 	return (NULL);
 }
-/*in case of unset PATH and unset PATH
-tmp_x_file1 --> permission dinied shoulld appear
-echo $?*/
 
 void	check_dir(t_shell *shell, t_command *cur_cmd)
 {
@@ -104,8 +101,6 @@ void	is_not_found(t_shell *shell, t_command *cur_cmd, char **full_path)
 		clean_exit(127, shell);
 	}
 }
-// permission check
-//  only
 
 void	check_perm(char *full_path, t_shell *shell)
 {

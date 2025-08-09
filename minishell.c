@@ -6,7 +6,7 @@
 /*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 00:12:49 by sel-abbo          #+#    #+#             */
-/*   Updated: 2025/08/03 19:30:37 by sel-abbo         ###   ########.fr       */
+/*   Updated: 2025/08/08 11:54:39 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "includes/minishell.h"
@@ -67,13 +67,15 @@ void	initialize_shell(t_shell *shell, char **env)
 	shlvl(shell->env, &shell->env_gc);
 	pwd = getcwd(NULL, 0);
 	if (!pwd)
+	{
 		shell->cwd = NULL;
+	}
 	else
 	{
 		shell->cwd = pwd;
 		gc_add(&shell->env_gc, pwd);
 	}
-    shell->herdoc_fd = -1;
+	shell->herdoc_fd = -1;
 	get_shell(shell);
 }
 
@@ -86,8 +88,6 @@ int	main(int ac, char **av, char **env)
 	initialize_shell(&shell, env);
 	while (1337)
 	{
-		shell.tokens = NULL;
-		shell.cmd = NULL;
 		setup_signals();
 		get_signal_index(0);
 		shell.r_line = readline("Niggshell~> ");
@@ -96,11 +96,14 @@ int	main(int ac, char **av, char **env)
 			ft_putstr_fd("exit\n", 2);
 			break ;
 		}
-		add_history(shell.r_line);
-		gc_add(&shell.gc, shell.r_line);
-		if (parsing_command(&shell))
-			start_exec(&shell);
+		if (ft_strlen(shell.r_line))
+		{
+			add_history(shell.r_line);
+			gc_add(&shell.gc, shell.r_line);
+			if (parsing_command(&shell))
+				start_exec(&shell);
+		}
 		gc_clean(&shell.gc);
 	}
-	clean_exit(0, &shell);
+	clean_exit(shell.last_exit_status, &shell);
 }

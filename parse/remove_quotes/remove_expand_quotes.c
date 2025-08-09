@@ -63,6 +63,12 @@ void	remove_expand_quotes(t_token *tokens, char *r_str, t_gc_node **gc)
 	current = tokens;
 	while (current)
 	{
+        if(!(ft_strncmp(current->value, ft_strjoin(r_str, r_str, gc), 18)))
+        {
+            current->value = ft_strdup("", gc);
+            current = current->next;
+            continue;
+        }
 		if (ft_strlen(current->value) != 0)
 			current->value = remove_rstr_from_value(current->value, r_str, gc);
 		current = current->next;
