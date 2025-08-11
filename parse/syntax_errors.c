@@ -6,7 +6,7 @@
 /*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 03:33:38 by sel-abbo          #+#    #+#             */
-/*   Updated: 2025/07/26 10:46:24 by zatais           ###   ########.fr       */
+/*   Updated: 2025/08/10 20:45:30 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,34 @@ int	check_quots(t_shell *shell, char *r_line)
 	return (1);
 }
 
-int	check_pipe(t_shell *shell, t_token *token)
+int	check_redir(t_shell *shell, t_token *cur)
+{
+	if (isredirction(cur) && (cur->next == NULL || isredirction(cur->next)
+			|| cur->next->type == PIPE))
+	{
+		if (cur->next)
+			print_error(shell, ERRNO_RD, cur->next->value);
+		else
+			print_error(shell, ERRNO_RD, "'newline'");
+		return (0);
+	}
+	return (1);
+}
+
+int	check_pipe(t_shell *shell, t_token *cur)
+{
+	if (cur->type == PIPE && (cur->next == NULL || cur->next->type == PIPE))
+	{
+		if (cur->next && cur->next->type == PIPE)
+			print_error(shell, ERRNO_P, "`||'");
+		else
+			print_error(shell, ERRNO_P, "`|'");
+		return (0);
+	}
+	return (1);
+}
+
+int	check_syntax_error(t_shell *shell, t_token *token)
 {
 	t_token	*cur;
 
@@ -58,45 +85,11 @@ int	check_pipe(t_shell *shell, t_token *token)
 	}
 	while (cur)
 	{
-		if (cur->type == PIPE && (cur->next == NULL || cur->next->type == PIPE))
-		{
-			if (cur->next && cur->next->type == PIPE)
-				print_error(shell, ERRNO_P, "`||'");
-			else
-				print_error(shell, ERRNO_P, "`|'");
+		if (!check_pipe(shell, cur))
 			return (0);
-		}
+		if (!check_redir(shell, cur))
+			return (0);
 		cur = cur->next;
 	}
-	return (1);
-}
-
-int	check_redir(t_shell *shell, t_token *token)
-{
-	t_token	*cur;
-
-	cur = token;
-	while (cur)
-	{
-		if (isredirction(cur) && (cur->next == NULL || isredirction(cur->next)
-				|| cur->next->type == PIPE))
-		{
-			if (cur->next)
-				print_error(shell, ERRNO_RD, cur->next->value);
-			else
-				print_error(shell, ERRNO_RD, "'newline'");
-			return (0);
-		}
-		cur = cur->next;
-	}
-	return (1);
-}
-
-int	check_syntax_error(t_shell *shell, t_token *token)
-{
-	if (!check_pipe(shell, token))
-		return (0);
-	if (!check_redir(shell, token))
-		return (0);
 	return (1);
 }

@@ -6,7 +6,7 @@
 /*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 16:16:59 by sel-abbo          #+#    #+#             */
-/*   Updated: 2025/08/03 16:45:17 by sel-abbo         ###   ########.fr       */
+/*   Updated: 2025/08/10 15:54:33 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,13 +89,10 @@ char	*handle_expand(char *value, t_shell *shell)
 	result = ft_strdup("", &shell->gc);
 	while (value[i])
 	{
-		if (value[i] == '\'' || value[i] == '"')
-		{
-			if (value[i] == '"')
-				i += d_quote(&value[i], shell, &result);
-			if (value[i] == '\'')
-				i += s_quote(&value[i], shell, &result);
-		}
+		if (value[i] == '"')
+			i += d_quote(&value[i], shell, &result);
+		if (value[i] == '\'')
+			i += s_quote(&value[i], shell, &result);
 		else
 			i += n_quote(&value[i], shell, &result);
 	}
@@ -104,7 +101,6 @@ char	*handle_expand(char *value, t_shell *shell)
 
 void	expansions(t_shell *shell)
 {
-	int		flag;
 	char	*j_str;
 	t_token	*current;
 	t_token	*prev;
@@ -121,9 +117,7 @@ void	expansions(t_shell *shell)
 			{
 				j_str = handle_expand(current->value, shell);
 				current->value = j_str;
-				flag = (prev && (prev->type == OUTPUT || prev->type == APPEND
-							|| prev->type == INPUT));
-				split_after_expand(shell, current, j_str, flag);
+				split_after_expand(shell, current, j_str);
 			}
 		}
 		prev = current;

@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   exec_utils2.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zatais <zatais@student.1337.ma>            +#+  +:+       +#+        */
+/*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 13:16:13 by zatais            #+#    #+#             */
-/*   Updated: 2025/08/08 10:08:50 by zatais           ###   ########.fr       */
+/*   Updated: 2025/08/11 09:49:24 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 #include "../includes/minishell.h"
-#include <unistd.h>
 
 int	is_builtin(char *cmd)
 {
@@ -61,6 +61,6 @@ void	exec_child(t_shell *shell, t_command *cur_cmd)
 	check_perm(full_path, shell);
 	env_array = convert_env(shell, &shell->gc);
 	execve(full_path, cur_cmd->args, env_array);
-	cmd_error(full_path, NULL, strerror(errno));
+	cmd_error(full_path, NULL, strerror(errno), &shell->gc);
 	clean_exit(126, shell);
 }

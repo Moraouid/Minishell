@@ -6,7 +6,7 @@
 /*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 10:42:26 by sel-abbo          #+#    #+#             */
-/*   Updated: 2025/08/08 11:52:48 by sel-abbo         ###   ########.fr       */
+/*   Updated: 2025/08/10 21:06:04 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,12 +47,6 @@ void	heredoc_error(char *delimiter)
 	ft_putstr_fd("')\n", 2);
 }
 
-void	write_line(int fd, char *line)
-{
-	write(fd, line, ft_strlen(line));
-	write(fd, "\n", 1);
-}
-
 void	process_line(t_shell *shell, int fd, char *line, int expand)
 {
 	char	*expanded;
@@ -62,13 +56,13 @@ void	process_line(t_shell *shell, int fd, char *line, int expand)
 		if (find_dollar_sign(line))
 		{
 			expanded = expand_var_heredoc(shell, line);
-			write_line(fd, expanded);
+			ft_putendl_fd(expanded, fd);
 		}
 		else
-			write_line(fd, line);
+			ft_putendl_fd(line, fd);
 	}
 	else
-		write_line(fd, line);
+		ft_putendl_fd(line, fd);
 }
 
 void	write_to_tmp(t_shell *shell, char *delimiter, int fd, int expand)
@@ -91,4 +85,12 @@ void	write_to_tmp(t_shell *shell, char *delimiter, int fd, int expand)
 		process_line(shell, fd, line, expand);
 		free(line);
 	}
+}
+
+int	setup_heredoc_file(char **filename, t_shell *shell)
+{
+	*filename = generate_filename(shell);
+	if (!*filename)
+		return (perror("Niggshell: heredoc: tmp file failed"), 0);
+	return (1);
 }

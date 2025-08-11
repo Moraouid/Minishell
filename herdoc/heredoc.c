@@ -6,7 +6,7 @@
 /*   By: zatais <zatais@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 08:29:31 by zatais            #+#    #+#             */
-/*   Updated: 2025/08/08 11:40:00 by zatais           ###   ########.fr       */
+/*   Updated: 2025/08/10 19:05:47 by zatais           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,21 +29,13 @@ char	*generate_filename(t_shell *shell)
 	return (NULL);
 }
 
-int	setup_heredoc_file(char **filename, t_shell *shell)
-{
-	*filename = generate_filename(shell);
-	if (!*filename)
-		return (perror("Niggshell: heredoc: tmp file failed"), 0);
-	return (1);
-}
-
 int	handle_heredoc_child(t_shell *shell, t_token *d, int fd, int exp)
 {
 	int	pid;
 
 	signal(SIGINT, SIG_IGN);
 	pid = fork();
-	if (pid == 0)
+	if (!pid)
 	{
 		get_signal_index(1);
 		setup_signals();
@@ -54,12 +46,29 @@ int	handle_heredoc_child(t_shell *shell, t_token *d, int fd, int exp)
 	return (pid);
 }
 
+int	wait_heredoc(t_shell *shell, int pid, int *fd)
+{
+	int	status;
+
+	waitpid(pid, &status, 0);
+	if (WIFEXITED(status))
+		shell->last_exit_status = WEXITSTATUS(status);
+	else if (WIFSIGNALED(status))
+		shell->last_exit_status = 128 + WTERMSIG(status);
+	if (shell->last_exit_status == 130)
+	{
+		close(*fd);
+		*fd = -1;
+		return (0);
+	}
+	return (1);
+}
+
 int	process_heredoc(t_shell *shell, t_token *delim)
 {
 	char	*filename;
 	int		fd;
 	int		pid;
-	int		status;
 	int		expand;
 
 	expand = (!ft_strchr(delim->value, '"') && !ft_strchr(delim->value, '\''));
@@ -72,18 +81,10 @@ int	process_heredoc(t_shell *shell, t_token *delim)
 	if (fd < 0)
 		return (perror("Niggshell: heredoc: open failed"), 0);
 	pid = handle_heredoc_child(shell, delim, fd, expand);
-	waitpid(pid, &status, 0);
-	///
-	if (WIFEXITED(status))
-	{
-		shell->last_exit_status = WEXITSTATUS(status);
-		if (shell->last_exit_status == 130)
-		{
-			close(fd);
-			return (0);
-		}
-	}
-	close(fd);
+	if (!wait_heredoc(shell, pid, &shell->herdoc_fd))
+		return (0);
+	close(shell->herdoc_fd);
+	shell->herdoc_fd = -1;
 	delim->value = filename;
 	return (1);
 }

@@ -19,10 +19,6 @@ t_redir	*creat_node_redirction(t_shell *shell, t_token_type type, t_token *next)
 	redirction = gc_malloc(&shell->gc, sizeof(t_redir));
 	memset(redirction, 0, sizeof(t_redir));
 	redirction->type = type;
-	if (next->type == AMBGUS)
-		redirction->f_ambiguous = 1;
-	else
-		redirction->f_ambiguous = 0;
 	if (type == HEREDOC)
 		redirction->h_filename = next->value;
 	else
@@ -65,8 +61,7 @@ void	fill_args_and_redirs(t_shell *shell, char **args, t_redir **redir)
 	i = 0;
 	while (shell->tokens && shell->tokens->type != PIPE)
 	{
-		while (shell->tokens && (shell->tokens->type == WORD
-				|| shell->tokens->type == AMBGUS))
+		while (shell->tokens && shell->tokens->type == WORD)
 		{
 			if (shell->tokens->value)
 				args[i++] = ft_strdup(shell->tokens->value, &shell->gc);

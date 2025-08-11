@@ -6,14 +6,11 @@
 /*   By: zatais <zatais@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 19:19:34 by zatais            #+#    #+#             */
-/*   Updated: 2025/08/08 10:12:16 by zatais           ###   ########.fr       */
+/*   Updated: 2025/08/10 13:11:16 by zatais           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
-#include <readline/history.h>
-#include <signal.h>
-#include <stdlib.h>
 
 int	execute_builtin(t_shell *shell, t_command *cmd)
 {
@@ -25,7 +22,7 @@ int	execute_builtin(t_shell *shell, t_command *cmd)
 	else if (!ft_strncmp(cmd->args[0], "echo", 5))
 		ret = my_echo(&cmd->args[1]);
 	else if (!ft_strncmp(cmd->args[0], "env", 4))
-		ret = my_env(shell->env, &cmd->args[1]);
+		ret = my_env(shell->env);
 	else if (!ft_strncmp(cmd->args[0], "export", 7))
 		ret = my_export(&shell->env, &cmd->args[1], &shell->env_gc);
 	else if (!ft_strncmp(cmd->args[0], "pwd", 4))
@@ -107,8 +104,6 @@ void	exec_pipeline(t_shell *shell, int count)
 			parent_process(cur_cmd, pipes);
 		cur_cmd = cur_cmd->next;
 	}
-	if (pipes[0] != -1)
-		close(pipes[0]);
 	wait_all(shell, pids, count);
 }
 

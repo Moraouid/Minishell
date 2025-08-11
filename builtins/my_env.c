@@ -6,7 +6,7 @@
 /*   By: zatais <zatais@student.1337.ma>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 18:14:59 by zatais            #+#    #+#             */
-/*   Updated: 2025/06/19 18:14:59 by zatais           ###   ########.fr       */
+/*   Updated: 2025/08/10 12:18:09 by zatais           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,14 +23,10 @@ int	is_var_exist(t_env *env, char *var)
 	return (0);
 }
 
-int	my_env(t_env *env, char **args)
+int	my_env(t_env *env)
 {
 	t_env	*tmp;
 
-	if (*args)
-		return (cmd_error("env", *args, "No such file or directory"), 1);
-	if (!is_var_exist(env, "PATH=") && !*args)
-		return (cmd_error("env", NULL, "No such file or directory"), 1);
 	while (env)
 	{
 		if (!ft_strncmp(env->value, "_=", 2))

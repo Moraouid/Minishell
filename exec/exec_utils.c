@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zatais <zatais@student.1337.ma>            +#+  +:+       +#+        */
+/*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 11:20:15 by zatais            #+#    #+#             */
-/*   Updated: 2025/08/08 10:08:41 by zatais           ###   ########.fr       */
+/*   Updated: 2025/08/11 11:06:39 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ char	**convert_env(t_shell *shell, t_gc_node **gc)
 	return (envp);
 }
 
-char	*find_bin(t_shell *shell, char *arg, t_env *env)
+char	*find_bin(t_shell *s, char *arg, t_env *env, int *err)
 {
 	char	*full_path;
 	char	**paths;
@@ -49,13 +49,12 @@ char	*find_bin(t_shell *shell, char *arg, t_env *env)
 		return (NULL);
 	path = get_env_value(env, "PATH");
 	if (!path || !*path)
-		path = ft_strdup(shell->cwd, &shell->gc);
-	paths = ft_split(path, ':', &shell->gc);
+		return (*err = 1, NULL);
+	paths = ft_split(path, ':', &s->gc);
 	i = -1;
 	while (paths[++i])
 	{
-		full_path = ft_strjoin(ft_strjoin(paths[i], "/", &shell->gc), arg,
-				&shell->gc);
+		full_path = ft_strjoin(ft_strjoin(paths[i], "/", &s->gc), arg, &s->gc);
 		if (!access(full_path, F_OK))
 			return (full_path);
 	}
@@ -68,7 +67,7 @@ void	check_dir(t_shell *shell, t_command *cur_cmd)
 
 	if (stat(cur_cmd->args[0], &statbuf))
 	{
-		cmd_error(cur_cmd->args[0], NULL, strerror(errno));
+		cmd_error(cur_cmd->args[0], NULL, strerror(errno), &shell->gc);
 		if (errno == ENOENT)
 			clean_exit(127, shell);
 		else
@@ -76,29 +75,36 @@ void	check_dir(t_shell *shell, t_command *cur_cmd)
 	}
 	if (S_ISDIR(statbuf.st_mode))
 	{
-		cmd_error(cur_cmd->args[0], NULL, "is a directory");
+		cmd_error(cur_cmd->args[0], NULL, "is a directory", &shell->gc);
 		clean_exit(126, shell);
 	}
 }
 
-void	is_not_found(t_shell *shell, t_command *cur_cmd, char **full_path)
+void	is_not_found(t_shell *sh, t_command *cur_cmd, char **full_path)
 {
+	int	err;
+
+	err = 0;
 	if (!*cur_cmd->args[0])
 	{
-		cmd_error(cur_cmd->args[0], NULL, "command not found");
-		clean_exit(1, shell);
+		cmd_error(cur_cmd->args[0], NULL, "command not found", &sh->gc);
+		clean_exit(127, sh);
 	}
 	if (ft_strchr(cur_cmd->args[0], '/'))
 	{
-		check_dir(shell, cur_cmd);
-		*full_path = ft_strdup(cur_cmd->args[0], &shell->gc);
+		check_dir(sh, cur_cmd);
+		*full_path = ft_strdup(cur_cmd->args[0], &sh->gc);
 	}
 	else
-		*full_path = find_bin(shell, cur_cmd->args[0], shell->env);
+		*full_path = find_bin(sh, cur_cmd->args[0], sh->env, &err);
 	if (!*full_path || access(*full_path, F_OK))
 	{
-		cmd_error(cur_cmd->args[0], NULL, "command not found");
-		clean_exit(127, shell);
+		if (!err)
+			cmd_error(cur_cmd->args[0], NULL, "command not found", &sh->gc);
+		else
+			cmd_error(cur_cmd->args[0], NULL, "No such file or directory",
+				&sh->gc);
+		clean_exit(127, sh);
 	}
 }
 
@@ -106,7 +112,7 @@ void	check_perm(char *full_path, t_shell *shell)
 {
 	if (access(full_path, X_OK))
 	{
-		cmd_error(full_path, NULL, "permission denied");
+		cmd_error(full_path, NULL, "permission denied", &shell->gc);
 		clean_exit(126, shell);
 	}
 }

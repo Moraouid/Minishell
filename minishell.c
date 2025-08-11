@@ -6,15 +6,16 @@
 /*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 00:12:49 by sel-abbo          #+#    #+#             */
-/*   Updated: 2025/08/08 11:54:39 by sel-abbo         ###   ########.fr       */
+/*   Updated: 2025/08/10 21:09:32 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 #include "includes/minishell.h"
 
 int	shlvl(t_env *env, t_gc_node **gc)
 {
-	t_env	*sh;
 	char	*value;
+	t_env	*sh;
 	int		n;
 	int		ovf;
 
@@ -30,13 +31,10 @@ int	shlvl(t_env *env, t_gc_node **gc)
 
 void	init_env(t_shell *shell, t_env **env, t_gc_node **gc)
 {
-	char	*a[6];
+	char	*a[5];
 	char	*pwd;
-	char	*p1;
-	char	*p2;
+	char	*str;
 
-	p1 = "PATH=/.local/nvim/bin:/usr/local/sbin:";
-	p2 = "/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin";
 	pwd = getcwd(NULL, 0);
 	if (!pwd)
 		a[0] = ft_strdup("PWD=", gc);
@@ -47,11 +45,10 @@ void	init_env(t_shell *shell, t_env **env, t_gc_node **gc)
 		a[0] = ft_strjoin("PWD=", pwd, gc);
 	}
 	a[1] = ft_strdup("SHLVL=1", gc);
-	a[2] = ft_strdup(ft_strjoin(p1, p2, gc), gc);
-	a[3] = ft_strdup(ft_strjoin("_=", ft_strjoin(pwd, "/./minishell", gc), gc),
-			gc);
-	a[4] = ft_strdup("OLDPWD", gc);
-	a[5] = NULL;
+	str = ft_strjoin("_=", ft_strjoin(pwd, "/./minishell", gc), gc);
+	a[2] = str;
+	a[3] = ft_strdup("OLDPWD", gc);
+	a[4] = NULL;
 	my_export(env, a, gc);
 }
 
@@ -68,6 +65,8 @@ void	initialize_shell(t_shell *shell, char **env)
 	pwd = getcwd(NULL, 0);
 	if (!pwd)
 	{
+		long_err("pwd", &shell->gc);
+		long_err("pwd", &shell->gc);
 		shell->cwd = NULL;
 	}
 	else
@@ -88,8 +87,8 @@ int	main(int ac, char **av, char **env)
 	initialize_shell(&shell, env);
 	while (1337)
 	{
-		setup_signals();
 		get_signal_index(0);
+		setup_signals();
 		shell.r_line = readline("Niggshell~> ");
 		if (!shell.r_line)
 		{

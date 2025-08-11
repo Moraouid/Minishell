@@ -6,7 +6,7 @@
 /*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 07:54:04 by zatais            #+#    #+#             */
-/*   Updated: 2025/08/03 16:25:33 by sel-abbo         ###   ########.fr       */
+/*   Updated: 2025/08/10 21:08:21 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,17 +16,17 @@
 # include <errno.h>
 # include <fcntl.h>
 # include <limits.h>
+# include <stdio.h>
 # include <readline/history.h>
 # include <readline/readline.h>
 # include <signal.h>
 # include <stdbool.h>
-# include <stdio.h>
 # include <stdlib.h>
 # include <sys/stat.h>
 # include <sys/wait.h>
 # include <unistd.h>
-# include "exec.h"
 # include "parse.h"
+# include "exec.h"
 /* ----------------enum of errno--------------- */
 typedef enum e_errno
 {
@@ -56,7 +56,6 @@ typedef enum e_token_type
 	HEREDOC,
 	APPEND,
 	SPACES,
-	AMBGUS,
 	END
 }						t_token_type;
 
@@ -91,7 +90,6 @@ typedef struct s_token
 typedef struct s_redir
 {
 	int					type;
-	int					f_ambiguous;
 	char				*target;
 	char				*h_filename;
 	struct s_redir		*next;

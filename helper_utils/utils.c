@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zatais <zatais@student.1337.ma>            +#+  +:+       +#+        */
+/*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 18:50:14 by zatais            #+#    #+#             */
-/*   Updated: 2025/08/08 10:14:23 by zatais           ###   ########.fr       */
+/*   Updated: 2025/08/11 10:48:14 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,7 @@ void	ft_putstr_fd(char *s, int fd)
 	i = 0;
 	if (!s)
 		return ;
-	while (s[i])
-	{
-		write(fd, &s[i], 1);
-		i++;
-	}
+	write(fd, s, ft_strlen(s));
 }
 
 void	ft_putendl_fd(char *s, int fd)
@@ -34,30 +30,52 @@ void	ft_putendl_fd(char *s, int fd)
 	write(fd, "\n", 1);
 }
 
-void	cmd_error(char *cmd, char *arg, char *msg)
+void	cmd_error(char *cmd, char *arg, char *msg, t_gc_node **gc)
 {
-	write(2, "Niggshell: ", 11);
-	write(2, cmd, ft_strlen(cmd));
+	char	*str;
+
+	str = ft_strjoin("Niggshell: ", cmd, gc);
 	if (arg)
 	{
-		write(2, ": ", 2);
-		write(2, arg, ft_strlen(arg));
+		str = ft_strjoin(str, ": ", gc);
+		str = ft_strjoin(str, arg, gc);
 	}
 	if (msg)
 	{
-		write(2, ": ", 2);
-		write(2, msg, ft_strlen(msg));
+		str = ft_strjoin(str, ": ", gc);
+		str = ft_strjoin(str, msg, gc);
 	}
-	write(2, "\n", 1);
+	str = ft_strjoin(str, "\n", gc);
+	ft_putstr_fd(str, 2);
 }
 
-size_t	ft_atol(char *arg, int *overflow)
+int	is_overflowed(long res, int last_digit, int sign)
+{
+	long	max_threshold;
+	long	min_threshold;
+	int		max_last_digit;
+	int		min_last_digit;
+
+	max_threshold = LONG_MAX / 10;
+	min_threshold = LONG_MIN / 10;
+	max_last_digit = 7;
+	min_last_digit = -8;
+	if (sign == 1 && (res > max_threshold || (res == max_threshold
+				&& last_digit > max_last_digit)))
+		return (1);
+	if (sign == -1 && (-res < min_threshold || (-res == min_threshold
+				&& last_digit > -min_last_digit)))
+		return (1);
+	return (0);
+}
+
+long	ft_atol(char *arg, int *overflow)
 {
 	int		sign;
-	size_t	res;
+	long	res;
 	int		digit;
 
-	while ((*arg >= 0 && *arg <= 13) || *arg == 32)
+	while (is_space(*arg))
 		arg++;
 	sign = 1;
 	if (*arg == '-' || *arg == '+')
@@ -70,7 +88,7 @@ size_t	ft_atol(char *arg, int *overflow)
 	while (*arg >= '0' && *arg <= '9')
 	{
 		digit = *arg - 48;
-		if (res > LONG_MAX)
+		if (is_overflowed(res, digit, sign))
 			return (*overflow = 1, LONG_MAX);
 		res = (res * 10) + digit;
 		arg++;

@@ -6,7 +6,7 @@
 /*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 14:07:25 by sel-abbo          #+#    #+#             */
-/*   Updated: 2025/08/09 20:07:00 by sel-abbo         ###   ########.fr       */
+/*   Updated: 2025/08/10 20:54:32 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ char	*random_str(t_shell *shell)
 	char	buffer[200];
 	char	*r_str;
 
-	int(i), (j), (fd), (b_read);
+	int (i), (j), (fd), (b_read);
 	r_str = gc_malloc(&shell->gc, 10);
 	fd = open("/dev/random", O_RDONLY);
 	if (fd < 0)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   my_echo.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zatais <zatais@student.1337.ma>            +#+  +:+       +#+        */
+/*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 18:49:17 by zatais            #+#    #+#             */
-/*   Updated: 2025/08/08 10:12:56 by zatais           ###   ########.fr       */
+/*   Updated: 2025/08/11 10:47:49 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,21 @@
 
 void	print_args(char **args, int flag, int start, int spaces)
 {
+	char	*s;
+	t_shell	*shell;
+
+	shell = get_shell(NULL);
+	s = ft_strdup("", &shell->gc);
 	while (args[start])
 	{
-		ft_putstr_fd(args[start], 1);
+		s = ft_strjoin(s, args[start], &shell->gc);
 		if (spaces-- > 0)
-			write(1, " ", 1);
+			s = ft_strjoin(s, " ", &shell->gc);
 		start++;
 	}
 	if (!flag)
-		write(1, "\n", 1);
+		s = ft_strjoin(s, "\n", &shell->gc);
+	ft_putstr_fd(s, 1);
 }
 
 int	check_flag(char *arg)

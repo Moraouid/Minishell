@@ -23,7 +23,7 @@ SRCS = minishell.c \
 	helper_utils/utils4.c \
 	herdoc/heredoc.c \
 	herdoc/heredoc_utils.c \
-	herdoc/remove_quote_delimiter.c \
+	herdoc/heredoc_utils2.c \
 	parse/creat_command.c \
 	parse/parsing.c \
 	parse/parsing_utils.c \
@@ -41,7 +41,7 @@ SRCS = minishell.c \
 OBJS = $(SRCS:.c=.o)
 NAME = minishell
 CC = cc 
-CFLAGS = -Wall -Wextra -Werror -g
+CFLAGS = -Wall -Wextra -Werror
 LDFLAGS = -lreadline
 INCLUDES = -I/usr/include/readline
 

@@ -41,7 +41,7 @@ void				expand_variable(char *value, int *i, t_shell *shell,
 void				remove_expand_quotes(t_token *tokens, char *r_str,
 						t_gc_node **gc);
 void				split_after_expand(t_shell *shell, t_token *tokens,
-						char *j_str, int flag);
+						char *j_str);
 /* -------------signals funcions-------------- */
 int					get_signal_index(int state);
 void				sighandle(int sig);

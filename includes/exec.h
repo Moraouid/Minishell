@@ -6,7 +6,7 @@
 /*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 08:00:31 by zatais            #+#    #+#             */
-/*   Updated: 2025/08/08 11:19:19 by zatais           ###   ########.fr       */
+/*   Updated: 2025/08/11 11:04:29 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ typedef struct s_command	t_command;
 int							is_space(char c);
 int							ft_isalnum(int c);
 int							ft_isalpha(int c);
-int							my_echo(char **args);
+int							my_env(t_env *env);
 int							my_echo(char **args);
 int							sort_env(t_env *exp);
 int							redirect(t_redir *rd);
@@ -34,9 +34,9 @@ int							args_counter(char **args);
 int							cmd_counter(t_command *cmd);
 int							valid_identifier(char *name);
 int							ft_strcmp(char *s1, char *s2);
-int							my_env(t_env *env, char **args);
 int							open_in(int *fd, char *filename);
 int							my_cd(t_shell *shell, char **args);
+int							long_err(char *cmd, t_gc_node **gc);
 int							is_var_exist(t_env *env, char *var);
 int							my_exit(char **args, t_shell *shell);
 int							compare_env_vars(char *s1, char *s2);
@@ -51,8 +51,8 @@ int							create_new_node(t_env **env, char *arg,
 								t_gc_node **gc);
 /*----------------------------------------------------------------------------*/
 size_t						ft_strlen(char *s);
-size_t						ft_atol(char *arg, int *overflow);
-/*----------------------------------------------------------------------------*/
+long						ft_atol(char *arg, int *overflow);
+/*---------------------------------------------------------------------------*/
 void						cmd_error2(char *arg);
 void						gc_clean(t_gc_node **gc);
 void						start_exec(t_shell *shell);
@@ -69,25 +69,26 @@ void						check_perm(char *full_path, t_shell *shell);
 void						exec_child(t_shell *shell, t_command *cur_cmd);
 void						clean_exit(int status, t_shell *shell);
 void						cmd_error(char *cmd_name, char *error_arg,
-								char *error_msg);
+								char *error_msg, t_gc_node **gc);
 void						child_process(t_shell *shell, t_command *cmd,
 								int *pipes);
 void						is_not_found(t_shell *shell, t_command *cur_cmd,
 								char **full_path);
-/*----------------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*/
 char						*ft_strchr(char *s, int c);
+char						*generate_filename(t_shell *shell);
+int							setup_heredoc_file(char **filename, t_shell *shell);
 char						*ft_strdup(char *s, t_gc_node **gc);
 char						*get_env_value(t_env *env, char *key);
 char						**ft_split(char *s, char c, t_gc_node **gc);
 char						**convert_env(t_shell *shell, t_gc_node **gc);
 char						*ft_strndup(char *s, size_t n, t_gc_node **gc);
 char						*ft_strjoin(char *s1, char *s2, t_gc_node **gc);
-char						*find_bin(t_shell *shell, char *arg, t_env *env);
 char						*remove_quote_delimiter(t_gc_node **gc, char *str);
-/*----------------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*/
 t_env						*last_node(t_env *node);
 t_env						*find_env_var(t_env *env, char *name);
 t_env						*create_node(char *envp, t_gc_node **gc);
-/*----------------------------------------------------------------------------*/
+/*---------------------------------------------------------------------------*/
 t_shell						*get_shell(t_shell *shell);
 #endif

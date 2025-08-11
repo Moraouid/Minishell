@@ -73,28 +73,12 @@ void	process_token_split(t_shell *shell, t_token *token, char **split)
 	token->next = next;
 }
 
-int	is_ambiguous(t_shell *shell, char *first_part, int count, int flag)
-{
-	char	*doubled;
-
-	doubled = ft_strjoin(shell->r_str, shell->r_str, &shell->gc);
-	if ((count != 1 || !ft_strcmp(doubled, first_part)) && flag)
-		return (1);
-	return (0);
-}
-
-void	split_after_expand(t_shell *shell, t_token *token, char *j_str,
-		int flag)
+void	split_after_expand(t_shell *shell, t_token *token, char *j_str)
 {
 	int		count;
 	char	**split;
 
 	count = count_for_split(&shell->gc, j_str, shell->r_str);
 	split = e_split(shell, j_str, count);
-	if (is_ambiguous(shell, split[0], count, flag))
-	{
-		token->type = AMBGUS;
-		return ;
-	}
 	process_token_split(shell, token, split);
 }

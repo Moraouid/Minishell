@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   my_exit.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zatais <zatais@student.1337.ma>            +#+  +:+       +#+        */
+/*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 18:49:27 by zatais            #+#    #+#             */
-/*   Updated: 2025/07/26 09:47:13 by zatais           ###   ########.fr       */
+/*   Updated: 2025/08/11 11:19:45 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,17 +57,17 @@ int	my_exit(char **args, t_shell *shell)
 	cmd_count = cmd_counter(shell->cmd);
 	n = args_counter(args);
 	if (cmd_count == 1)
-		ft_putendl_fd("exit", 2);
+		ft_putstr_fd("exit\n", 2);
 	if (!n)
 		exit_all(shell->last_exit_status, shell, cmd_count);
 	error = exit_status(args[0], &status);
 	if (error)
 	{
-		cmd_error("exit", args[0], "numeric argument required");
+		cmd_error("exit", args[0], "numeric argument required", &shell->gc);
 		exit_all(2, shell, cmd_count);
 	}
 	if (n > 1)
-		return (cmd_error("exit", NULL, "too many arguments"), 1);
+		return (cmd_error("exit", NULL, "too many arguments", &shell->gc), 1);
 	exit_all(status, shell, cmd_count);
 	return (status);
 }

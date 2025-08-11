@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   my_cd.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zatais <zatais@student.1337.ma>            +#+  +:+       +#+        */
+/*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 09:43:25 by zatais            #+#    #+#             */
-/*   Updated: 2025/07/26 09:43:25 by zatais           ###   ########.fr       */
+/*   Updated: 2025/08/11 09:41:56 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ char	*get_path(t_shell *shell, char **args)
 	{
 		home = get_env_value(shell->env, "HOME");
 		if (!home)
-			cmd_error("cd", NULL, "HOME not set");
+			cmd_error("cd", NULL, "HOME not set", &shell->gc);
 		else if (!*home)
 			return (ft_strdup(".", &shell->gc));
 		return (home);
@@ -44,7 +44,7 @@ char	*get_path(t_shell *shell, char **args)
 	{
 		oldpwd = get_env_value(shell->env, "OLDPWD");
 		if (!oldpwd)
-			cmd_error("cd", NULL, "OLDPWD not set");
+			cmd_error("cd", NULL, "OLDPWD not set", &shell->gc);
 		return (oldpwd);
 	}
 	return (args[0]);
@@ -92,21 +92,16 @@ int	my_cd(t_shell *shell, char **args)
 
 	oldpwd = get_env_value(shell->env, "PWD");
 	if (count_arguments(args) > 1)
-		return (cmd_error("cd", NULL, "too many arguments"), 1);
+		return (cmd_error("cd", NULL, "too many arguments", &shell->gc), 1);
 	path = get_path(shell, args);
 	if (!path)
 		return (1);
 	print = (args[0] && !ft_strcmp(args[0], "-"));
 	if (chdir(path))
-		return (cmd_error("cd", path, strerror(errno)), 1);
+		return (cmd_error("cd", path, strerror(errno), &shell->gc), 1);
 	new = getcwd(NULL, 0);
 	if (!new)
-	{
-		cmd_error("cd",
-			"error retrieving current directory: getcwd: cannot access parent directories",
-			"No such file or directory");
-		new = oldpwd;
-	}
+		return (long_err("cd", &shell->gc));
 	else
 		gc_add(&shell->gc, new);
 	if (print)
