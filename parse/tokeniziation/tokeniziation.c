@@ -6,7 +6,7 @@
 /*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/24 03:57:54 by sel-abbo          #+#    #+#             */
-/*   Updated: 2025/08/10 21:10:08 by sel-abbo         ###   ########.fr       */
+/*   Updated: 2025/08/11 16:08:59 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,8 +61,7 @@ t_token	*handle_word(t_shell *shell, char *r_line, int *i)
 	int		j;
 	char	*cmd;
 
-	j = 0;
-	cmd = allocate_word(shell, r_line, i);
+	cmd = allocate_word(shell, r_line, *i);
 	j = 0;
 	while (r_line[*i] && !is_separator(r_line, *i))
 		fill_word(r_line, i, cmd, &j);
@@ -76,7 +75,6 @@ int	tokeniziation(t_shell *shell)
 	int		type;
 	t_token	*n_token;
 
-	shell->tokens = NULL;
 	shell->tokens = NULL;
 	if (!check_quots(shell, shell->r_line))
 		return (0);

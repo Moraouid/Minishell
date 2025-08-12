@@ -6,7 +6,7 @@
 /*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 18:49:27 by zatais            #+#    #+#             */
-/*   Updated: 2025/08/11 11:19:45 by sel-abbo         ###   ########.fr       */
+/*   Updated: 2025/08/12 12:28:45 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,9 @@
 
 int	exit_status(char *status, int *exit)
 {
-	long	converted;
-	int		overflow;
 	int		i;
+	int		overflow;
+	long	converted;
 
 	overflow = 0;
 	i = -1;

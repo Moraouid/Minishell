@@ -3,12 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   my_export.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zatais <zatais@student.1337.ma>            +#+  +:+       +#+        */
+/*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 22:30:44 by zatais            #+#    #+#             */
-/*   Updated: 2025/06/23 01:32:42 by zatais           ###   ########.fr       */
+/*   Updated: 2025/08/12 12:39:20 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 #include "../includes/minishell.h"
 
 void	check_argument(char **arg, char **name, t_gc_node **gc)
@@ -76,15 +77,11 @@ int	my_export(t_env **env, char **args, t_gc_node **gc)
 	t_env		*copy_env;
 	t_gc_node	*temp_gc;
 
-	if (!args || !args[0])
+	if (!args[0])
 	{
 		temp_gc = NULL;
 		copy_env = NULL;
-		if (!copy_sort(*env, &copy_env, &temp_gc))
-		{
-			gc_clean(&temp_gc);
-			return (1);
-		}
+		copy_sort(*env, &copy_env, &temp_gc);
 		print_sorted_env(copy_env);
 		gc_clean(&temp_gc);
 		return (0);

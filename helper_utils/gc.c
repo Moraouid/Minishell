@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   gc.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zatais <zatais@student.1337.ma>            +#+  +:+       +#+        */
+/*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 10:24:52 by zatais            #+#    #+#             */
-/*   Updated: 2025/07/26 10:24:52 by zatais           ###   ########.fr       */
+/*   Updated: 2025/08/12 12:12:45 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,12 +31,15 @@ void	gc_clean(t_gc_node **gc)
 void	gc_add(t_gc_node **gc, void *ptr)
 {
 	t_gc_node	*node;
+	t_shell		*shell;
 
+	shell = get_shell(NULL);
 	node = malloc(sizeof(t_gc_node));
 	if (!node)
 	{
 		write(2, "Niggshell: gc_add malloc failed\n", 31);
-		gc_clean(gc);
+		gc_clean(&shell->gc);
+		gc_clean(&shell->env_gc);
 		exit(1);
 	}
 	node->ptr = ptr;
@@ -71,13 +74,16 @@ void	gc_remove(t_gc_node **gc, void *ptr)
 void	*gc_malloc(t_gc_node **gc, size_t size)
 {
 	void	*ptr;
+	t_shell	*shell;
 
+	shell = get_shell(NULL);
 	ptr = malloc(size);
 	if (!ptr)
 	{
 		write(2, "Niggshell: malloc failed\n", 25);
-		gc_clean(gc);
-		exit(134);
+		gc_clean(&shell->gc);
+		gc_clean(&shell->env_gc);
+		exit(1);
 	}
 	gc_add(gc, ptr);
 	return (ptr);

@@ -6,7 +6,7 @@
 /*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 00:12:49 by sel-abbo          #+#    #+#             */
-/*   Updated: 2025/08/10 21:09:32 by sel-abbo         ###   ########.fr       */
+/*   Updated: 2025/08/11 12:12:59 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,6 @@ void	init_env(t_shell *shell, t_env **env, t_gc_node **gc)
 {
 	char	*a[5];
 	char	*pwd;
-	char	*str;
 
 	pwd = getcwd(NULL, 0);
 	if (!pwd)
@@ -45,8 +44,7 @@ void	init_env(t_shell *shell, t_env **env, t_gc_node **gc)
 		a[0] = ft_strjoin("PWD=", pwd, gc);
 	}
 	a[1] = ft_strdup("SHLVL=1", gc);
-	str = ft_strjoin("_=", ft_strjoin(pwd, "/./minishell", gc), gc);
-	a[2] = str;
+	a[2] = ft_strjoin("_=", "./minishell", gc);
 	a[3] = ft_strdup("OLDPWD", gc);
 	a[4] = NULL;
 	my_export(env, a, gc);
@@ -57,15 +55,16 @@ void	initialize_shell(t_shell *shell, char **env)
 	char	*pwd;
 
 	memset(shell, 0, sizeof(t_shell));
-	if (!env || !*env)
+	if (!*env)
 		init_env(shell, &shell->env, &shell->env_gc);
 	else
+	{
 		copy_env(env, &shell->env, &shell->env_gc);
-	shlvl(shell->env, &shell->env_gc);
+		shlvl(shell->env, &shell->env_gc);
+	}
 	pwd = getcwd(NULL, 0);
 	if (!pwd)
 	{
-		long_err("pwd", &shell->gc);
 		long_err("pwd", &shell->gc);
 		shell->cwd = NULL;
 	}

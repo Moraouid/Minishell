@@ -6,7 +6,7 @@
 /*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 10:42:26 by sel-abbo          #+#    #+#             */
-/*   Updated: 2025/08/10 21:06:04 by sel-abbo         ###   ########.fr       */
+/*   Updated: 2025/08/11 16:09:11 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,15 +51,10 @@ void	process_line(t_shell *shell, int fd, char *line, int expand)
 {
 	char	*expanded;
 
-	if (expand)
+	if (!expand && find_dollar_sign(line))
 	{
-		if (find_dollar_sign(line))
-		{
-			expanded = expand_var_heredoc(shell, line);
-			ft_putendl_fd(expanded, fd);
-		}
-		else
-			ft_putendl_fd(line, fd);
+		expanded = expand_var_heredoc(shell, line);
+		ft_putendl_fd(expanded, fd);
 	}
 	else
 		ft_putendl_fd(line, fd);

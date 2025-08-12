@@ -6,25 +6,26 @@
 /*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 18:49:17 by zatais            #+#    #+#             */
-/*   Updated: 2025/08/11 10:47:49 by sel-abbo         ###   ########.fr       */
+/*   Updated: 2025/08/11 21:15:59 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-void	print_args(char **args, int flag, int start, int spaces)
+void	print_args(char **args, int flag, int spaces)
 {
+	int		i;
 	char	*s;
 	t_shell	*shell;
 
+	i = -1;
 	shell = get_shell(NULL);
 	s = ft_strdup("", &shell->gc);
-	while (args[start])
+	while (args[++i])
 	{
-		s = ft_strjoin(s, args[start], &shell->gc);
+		s = ft_strjoin(s, args[i], &shell->gc);
 		if (spaces-- > 0)
 			s = ft_strjoin(s, " ", &shell->gc);
-		start++;
 	}
 	if (!flag)
 		s = ft_strjoin(s, "\n", &shell->gc);
@@ -36,7 +37,7 @@ int	check_flag(char *arg)
 	int	i;
 
 	i = 0;
-	if (arg[i] != '-')
+	if (arg[i] != '-' || (arg[i] == '-' && !arg[1]))
 		return (0);
 	++i;
 	while (arg[i] && arg[i] == 'n')
@@ -67,6 +68,6 @@ int	my_echo(char **args)
 	while (args[++i] && check_flag(args[i]))
 		flag = 1;
 	spaces = args_counter(args) - i - 1;
-	print_args(args, flag, i, spaces);
+	print_args(&args[i], flag, spaces);
 	return (0);
 }

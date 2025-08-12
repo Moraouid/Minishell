@@ -6,7 +6,7 @@
 /*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 03:54:51 by sel-abbo          #+#    #+#             */
-/*   Updated: 2025/08/08 10:59:52 by sel-abbo         ###   ########.fr       */
+/*   Updated: 2025/08/11 22:48:21 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void				expand_variable(char *value, int *i, t_shell *shell,
 						char **res);
 void				remove_expand_quotes(t_token *tokens, char *r_str,
 						t_gc_node **gc);
-void				split_after_expand(t_shell *shell, t_token *tokens,
+void				split_after_expand(t_shell *shell, t_token **tokens,
 						char *j_str);
 /* -------------signals funcions-------------- */
 int					get_signal_index(int state);
@@ -54,10 +54,10 @@ int					is_separator(char *str, int i);
 int					tokeniziation(t_shell *shell);
 int					parsing_command(t_shell *shell);
 int					identify_type(char *str, int i);
-int					count_word_list(t_token **token);
+int					count_cmd(t_token **token);
 int					check_quots(t_shell *shell, char *r_line);
 int					check_syntax_error(t_shell *shell, t_token *token);
-char				*allocate_word(t_shell *shell, char *r_line, int *i);
+char				*allocate_word(t_shell *shell, char *r_line, int i);
 void				creat_command(t_shell *shell);
 void				remove_quotes(t_shell *shell);
 void				handle_quote_error(t_token_status status);

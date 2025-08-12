@@ -3,12 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   my_utils2.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zatais <zatais@student.1337.ma>            +#+  +:+       +#+        */
+/*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 06:17:02 by zatais            #+#    #+#             */
-/*   Updated: 2025/08/03 06:17:02 by zatais           ###   ########.fr       */
+/*   Updated: 2025/08/12 12:40:33 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 #include "../includes/minishell.h"
 
 void	print_sorted_env(t_env *exp)
@@ -36,7 +37,7 @@ void	print_sorted_env(t_env *exp)
 	}
 }
 
-int	copy_sort(t_env *env, t_env **exp, t_gc_node **gc)
+void	copy_sort(t_env *env, t_env **exp, t_gc_node **gc)
 {
 	t_env	*new_node;
 
@@ -46,7 +47,7 @@ int	copy_sort(t_env *env, t_env **exp, t_gc_node **gc)
 		add_back(exp, new_node);
 		env = env->next;
 	}
-	return (sort_env(*exp));
+	sort_env(*exp);
 }
 
 int	valid_identifier(char *name)

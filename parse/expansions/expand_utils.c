@@ -6,7 +6,7 @@
 /*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 14:07:25 by sel-abbo          #+#    #+#             */
-/*   Updated: 2025/08/10 20:54:32 by sel-abbo         ###   ########.fr       */
+/*   Updated: 2025/08/11 14:18:18 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 int	is_expandable(char c)
 {
-	return (c == '_' || ft_isalpha(c) || c == '?' || c == '"' || c == '\'');
+	return (c == '_' || ft_isalpha(c) || c == '?');
 }
 
 int	find_dollar_sign(char *str)

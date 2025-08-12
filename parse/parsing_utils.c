@@ -6,7 +6,7 @@
 /*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/24 04:53:27 by sel-abbo          #+#    #+#             */
-/*   Updated: 2025/08/03 19:09:35 by sel-abbo         ###   ########.fr       */
+/*   Updated: 2025/08/11 17:01:43 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ t_token	*creat_node_cmd(t_shell *shell, char *value, int type)
 	return (t_cmd);
 }
 
-int	count_word_list(t_token **token)
+int	count_cmd(t_token **token)
 {
 	int		count;
 	t_token	*cur;

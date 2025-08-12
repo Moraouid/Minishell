@@ -6,7 +6,7 @@
 /*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 16:16:59 by sel-abbo          #+#    #+#             */
-/*   Updated: 2025/08/10 15:54:33 by sel-abbo         ###   ########.fr       */
+/*   Updated: 2025/08/11 22:47:59 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,12 +61,7 @@ int	n_quote(char *value, t_shell *shell, char **res)
 	while (value[i] && value[i] != '\'' && value[i] != '"')
 	{
 		if (value[i] == '$')
-		{
-			if (value[i + 1] == '\'' || value[i + 1] == '"')
-				i++;
-			else
-				expand_variable(value, &i, shell, res);
-		}
+			expand_variable(value, &i, shell, res);
 		else
 		{
 			start = i;
@@ -103,12 +98,10 @@ void	expansions(t_shell *shell)
 {
 	char	*j_str;
 	t_token	*current;
-	t_token	*prev;
 
 	shell->r_str = random_str(shell);
 	j_str = ft_strdup("", &shell->gc);
 	current = shell->tokens;
-	prev = NULL;
 	while (current)
 	{
 		if (current->type == WORD)
@@ -117,10 +110,9 @@ void	expansions(t_shell *shell)
 			{
 				j_str = handle_expand(current->value, shell);
 				current->value = j_str;
-				split_after_expand(shell, current, j_str);
+				split_after_expand(shell, &current, j_str);
 			}
 		}
-		prev = current;
 		current = current->next;
 	}
 }

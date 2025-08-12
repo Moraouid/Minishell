@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   my_utils.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zatais <zatais@student.1337.ma>            +#+  +:+       +#+        */
+/*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 06:09:55 by zatais            #+#    #+#             */
-/*   Updated: 2025/08/03 06:09:55 by zatais           ###   ########.fr       */
+/*   Updated: 2025/08/12 12:40:56 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,18 +15,13 @@
 char	*get_env_value(t_env *env, char *key)
 {
 	size_t	key_len;
-	char	*val;
 
 	key_len = ft_strlen(key);
 	while (env)
 	{
-		if (!ft_strncmp(env->value, key, key_len) && (env->value[key_len] == '='
-				|| env->value[key_len] == '\0'))
-		{
-			val = ft_strchr(env->value, '=');
-			if (val)
-				return (val + 1);
-		}
+		if (!ft_strncmp(env->value, key, key_len)
+			&& (env->value[key_len] == '='))
+			return (&env->value[key_len + 1]);
 		env = env->next;
 	}
 	return (NULL);
@@ -79,11 +74,11 @@ t_env	*find_min_node(t_env *current)
 	return (min);
 }
 
-int	sort_env(t_env *exp)
+void	sort_env(t_env *exp)
 {
-	t_env	*current;
 	char	*swap;
 	t_env	*min;
+	t_env	*current;
 
 	current = exp;
 	while (current)
@@ -97,5 +92,4 @@ int	sort_env(t_env *exp)
 		}
 		current = current->next;
 	}
-	return (1);
 }

@@ -40,7 +40,7 @@ SRCS = minishell.c \
 
 OBJS = $(SRCS:.c=.o)
 NAME = minishell
-CC = cc 
+CC = cc -g
 CFLAGS = -Wall -Wextra -Werror
 LDFLAGS = -lreadline
 INCLUDES = -I/usr/include/readline

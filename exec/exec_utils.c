@@ -6,7 +6,7 @@
 /*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 11:20:15 by zatais            #+#    #+#             */
-/*   Updated: 2025/08/11 11:06:39 by sel-abbo         ###   ########.fr       */
+/*   Updated: 2025/08/12 12:16:52 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ char	**convert_env(t_shell *shell, t_gc_node **gc)
 	return (envp);
 }
 
+
 char	*find_bin(t_shell *s, char *arg, t_env *env, int *err)
 {
 	char	*full_path;
@@ -55,6 +56,8 @@ char	*find_bin(t_shell *s, char *arg, t_env *env, int *err)
 	while (paths[++i])
 	{
 		full_path = ft_strjoin(ft_strjoin(paths[i], "/", &s->gc), arg, &s->gc);
+		if (is_dir(full_path))
+			continue;
 		if (!access(full_path, F_OK))
 			return (full_path);
 	}

@@ -6,7 +6,7 @@
 /*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 09:43:25 by zatais            #+#    #+#             */
-/*   Updated: 2025/08/11 09:41:56 by sel-abbo         ###   ########.fr       */
+/*   Updated: 2025/08/11 18:53:36 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,14 +75,6 @@ void	update_pwd_vars(t_shell *shell, char *oldpwd, char *new)
 		my_export(&shell->env, export_args, &shell->env_gc);
 }
 
-void	update_cwd(t_shell *shell, char *new_path)
-{
-	char	*new_cwd;
-
-	new_cwd = ft_strdup(new_path, &shell->env_gc);
-	shell->cwd = new_cwd;
-}
-
 int	my_cd(t_shell *shell, char **args)
 {
 	char	*oldpwd;
@@ -107,6 +99,6 @@ int	my_cd(t_shell *shell, char **args)
 	if (print)
 		ft_putendl_fd(new, 1);
 	update_pwd_vars(shell, oldpwd, new);
-	update_cwd(shell, new);
+	shell->cwd = ft_strdup(new, &shell->env_gc);
 	return (0);
 }

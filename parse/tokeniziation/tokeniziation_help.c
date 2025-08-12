@@ -6,7 +6,7 @@
 /*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/24 04:05:31 by sel-abbo          #+#    #+#             */
-/*   Updated: 2025/08/03 17:44:09 by sel-abbo         ###   ########.fr       */
+/*   Updated: 2025/08/11 12:38:43 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,13 +70,13 @@ int	is_operator(char *str, int i)
 	return (0);
 }
 
-char	*allocate_word(t_shell *shell, char *r_line, int *i)
+char	*allocate_word(t_shell *shell, char *r_line, int i)
 {
 	int		temp_i;
 	char	*cmd;
 	char	quote;
 
-	temp_i = *i;
+	temp_i = i;
 	while (r_line[temp_i] && !is_separator(r_line, temp_i))
 	{
 		if (r_line[temp_i] == '"' || r_line[temp_i] == '\'')
@@ -91,6 +91,6 @@ char	*allocate_word(t_shell *shell, char *r_line, int *i)
 		else
 			temp_i++;
 	}
-	cmd = gc_malloc(&shell->gc, temp_i - *i + 1);
+	cmd = gc_malloc(&shell->gc, temp_i - i + 1);
 	return (cmd);
 }

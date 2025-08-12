@@ -6,7 +6,7 @@
 /*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 18:50:14 by zatais            #+#    #+#             */
-/*   Updated: 2025/08/11 10:48:14 by sel-abbo         ###   ########.fr       */
+/*   Updated: 2025/08/11 20:52:26 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,6 @@
 
 void	ft_putstr_fd(char *s, int fd)
 {
-	int	i;
-
-	i = 0;
 	if (!s)
 		return ;
 	write(fd, s, ft_strlen(s));

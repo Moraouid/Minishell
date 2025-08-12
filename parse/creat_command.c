@@ -6,7 +6,7 @@
 /*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/05 21:51:17 by sel-abbo          #+#    #+#             */
-/*   Updated: 2025/08/03 19:09:31 by sel-abbo         ###   ########.fr       */
+/*   Updated: 2025/08/11 17:01:43 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ void	creat_command(t_shell *shell)
 	shell->cmd = NULL;
 	while (shell->tokens)
 	{
-		count = count_word_list(&shell->tokens);
+		count = count_cmd(&shell->tokens);
 		args = gc_malloc(&shell->gc, (count + 1) * sizeof(char *));
 		fill_args_and_redirs(shell, args, &redir);
 		n_cmd = creat_cmd(shell, args, redir);

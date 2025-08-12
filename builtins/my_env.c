@@ -3,25 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   my_env.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zatais <zatais@student.1337.ma>            +#+  +:+       +#+        */
+/*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 18:14:59 by zatais            #+#    #+#             */
-/*   Updated: 2025/08/10 12:18:09 by zatais           ###   ########.fr       */
+/*   Updated: 2025/08/11 21:21:55 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
-
-int	is_var_exist(t_env *env, char *var)
-{
-	while (env)
-	{
-		if (!ft_strncmp(env->value, var, 5))
-			return (1);
-		env = env->next;
-	}
-	return (0);
-}
 
 int	my_env(t_env *env)
 {

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zatais <zatais@student.1337.ma>            +#+  +:+       +#+        */
+/*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 08:29:31 by zatais            #+#    #+#             */
-/*   Updated: 2025/08/10 19:05:47 by zatais           ###   ########.fr       */
+/*   Updated: 2025/08/11 16:08:12 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,8 @@ char	*generate_filename(t_shell *shell)
 	while (++i < 9)
 	{
 		rand_str = random_str(shell);
+		if (!rand_str)
+			return (NULL);
 		filename = ft_strjoin("/tmp/.heredoc_", rand_str, &shell->gc);
 		if (access(filename, F_OK))
 			return (filename);
@@ -41,6 +43,7 @@ int	handle_heredoc_child(t_shell *shell, t_token *d, int fd, int exp)
 		setup_signals();
 		write_to_tmp(shell, d->value, fd, exp);
 		close(fd);
+		shell->herdoc_fd = -1;
 		clean_exit(0, shell);
 	}
 	return (pid);
@@ -71,8 +74,8 @@ int	process_heredoc(t_shell *shell, t_token *delim)
 	int		pid;
 	int		expand;
 
-	expand = (!ft_strchr(delim->value, '"') && !ft_strchr(delim->value, '\''));
-	if (!expand)
+	expand = (ft_strchr(delim->value, '"') || ft_strchr(delim->value, '\''));
+	if (expand)
 		delim->value = remove_quote_delimiter(&shell->gc, delim->value);
 	if (!setup_heredoc_file(&filename, shell))
 		return (0);

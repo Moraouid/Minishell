@@ -6,7 +6,7 @@
 /*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 11:23:08 by sel-abbo          #+#    #+#             */
-/*   Updated: 2025/08/03 17:07:40 by sel-abbo         ###   ########.fr       */
+/*   Updated: 2025/08/11 20:54:24 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,13 +69,13 @@ char	*remove_quotes_helper(t_shell *shell, char *value, t_quotes *flag,
 		else if (!ft_strncmp(&value[flag->i], r_str, 9) && !flag->dq
 			&& !flag->sq)
 		{
-			value[flag->j++] = value[flag->i++];
+			res[flag->j++] = value[flag->i++];
 			flag->rq = !flag->rq;
 		}
 		else
-			value[flag->j++] = value[flag->i++];
+			res[flag->j++] = value[flag->i++];
 	}
-	return (value);
+	return (res);
 }
 
 void	remove_quotes(t_shell *shell)

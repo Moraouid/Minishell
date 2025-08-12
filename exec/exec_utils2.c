@@ -6,7 +6,7 @@
 /*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 13:16:13 by zatais            #+#    #+#             */
-/*   Updated: 2025/08/11 09:49:24 by sel-abbo         ###   ########.fr       */
+/*   Updated: 2025/08/12 12:17:04 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,4 +63,13 @@ void	exec_child(t_shell *shell, t_command *cur_cmd)
 	execve(full_path, cur_cmd->args, env_array);
 	cmd_error(full_path, NULL, strerror(errno), &shell->gc);
 	clean_exit(126, shell);
+}
+
+int	is_dir(char *full_path)
+{
+	struct stat	statbuf;
+
+	if (!stat(full_path, &statbuf))
+		return (S_ISDIR(statbuf.st_mode));
+	return (0);
 }

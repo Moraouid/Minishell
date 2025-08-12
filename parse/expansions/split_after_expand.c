@@ -6,7 +6,7 @@
 /*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 11:48:40 by sel-abbo          #+#    #+#             */
-/*   Updated: 2025/08/03 16:42:49 by sel-abbo         ###   ########.fr       */
+/*   Updated: 2025/08/11 22:47:51 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,32 +48,35 @@ char	**e_split(t_shell *shell, char *value, int count)
 	res = gc_malloc(&shell->gc, (count + 1) * sizeof(char *));
 	fill_split_result(shell, value, res, flag);
 	if (flag->i > flag->start)
+	{
 		res[flag->j] = ft_strdup(&value[flag->start], &shell->gc);
-	res[flag->j + 1] = NULL;
+		res[flag->j + 1] = NULL;
+	}
+	else
+		res[flag->j] = NULL;
 	return (res);
 }
 
-void	process_token_split(t_shell *shell, t_token *token, char **split)
+void	process_token_split(t_shell *shell, t_token **token, char **split)
 {
 	int		i;
 	t_token	*next;
 	t_token	*new_token;
 
 	i = 1;
-	next = token->next;
-	token->value = split[0];
-	token->type = WORD;
+	next = (*token)->next;
+	(*token)->value = split[0];
 	while (split[i])
 	{
 		new_token = creat_node_cmd(shell, split[i], WORD);
-		token->next = new_token;
-		token = new_token;
+		(*token)->next = new_token;
+		*token = new_token;
 		i++;
 	}
-	token->next = next;
+	(*token)->next = next;
 }
 
-void	split_after_expand(t_shell *shell, t_token *token, char *j_str)
+void	split_after_expand(t_shell *shell, t_token **token, char *j_str)
 {
 	int		count;
 	char	**split;
