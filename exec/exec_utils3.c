@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_utils3.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: zatais <zatais@student.1337.ma>            +#+  +:+       +#+        */
+/*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 06:29:07 by zatais            #+#    #+#             */
-/*   Updated: 2025/08/08 10:10:43 by zatais           ###   ########.fr       */
+/*   Updated: 2025/08/12 22:15:38 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@ int	fork_err(t_command *cur_cmd, int pid, int *pipes)
 		perror("Niggshell: fork");
 		if (cur_cmd->next)
 		{
+			if (pipes[0] != 1)
+				close(pipes[0]);
 			close(pipes[1]);
 			close(pipes[2]);
 		}

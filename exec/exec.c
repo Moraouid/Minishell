@@ -6,7 +6,7 @@
 /*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 19:19:34 by zatais            #+#    #+#             */
-/*   Updated: 2025/08/11 17:47:46 by sel-abbo         ###   ########.fr       */
+/*   Updated: 2025/08/13 00:23:50 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,12 +38,12 @@ void	wait_all(t_shell *shell, int *pids, int count)
 {
 	int	j;
 	int	status;
-	int	last_status;
 	int	err_flag;
+	int	last_status;
 
-	j = 0;
+	j = -1;
 	err_flag = 0;
-	while (j < count)
+	while (++j < count)
 	{
 		waitpid(pids[j], &status, 0);
 		if (j == count - 1)
@@ -53,7 +53,6 @@ void	wait_all(t_shell *shell, int *pids, int count)
 			err_flag = 1;
 			write(1, "\n", 1);
 		}
-		j++;
 	}
 	if (WIFEXITED(last_status))
 		shell->last_exit_status = WEXITSTATUS(last_status);
@@ -72,6 +71,8 @@ int	setup_pipe(t_command *cmd, int *pipes)
 	if (pipe(new_pipe) == -1)
 	{
 		perror("Niggshell");
+		if (pipes[0] != -1)
+			close(pipes[0]);
 		return (0);
 	}
 	pipes[1] = new_pipe[0];
@@ -98,7 +99,7 @@ void	exec_pipeline(t_shell *shell, int count)
 		pids[++i] = fork();
 		if (fork_err(cur_cmd, pids[i], pipes))
 			break ;
-		if (pids[i] == 0)
+		if (!pids[i])
 			child_process(shell, cur_cmd, pipes);
 		else
 			parent_process(cur_cmd, pipes);

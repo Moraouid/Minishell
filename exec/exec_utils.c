@@ -6,7 +6,7 @@
 /*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 11:20:15 by zatais            #+#    #+#             */
-/*   Updated: 2025/08/12 12:16:52 by sel-abbo         ###   ########.fr       */
+/*   Updated: 2025/08/12 23:26:37 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,40 +38,40 @@ char	**convert_env(t_shell *shell, t_gc_node **gc)
 	return (envp);
 }
 
-
 char	*find_bin(t_shell *s, char *arg, t_env *env, int *err, int *perm)
 {
 	char	*full_path;
 	char	**paths;
 	char	*path;
 	int		i;
-  char *tmp;
+	char	*tmp;
 
-  tmp = NULL;
+	tmp = NULL;
 	if (!ft_strncmp(arg, "..", 3) || !ft_strncmp(arg, ".", 2))
-		return (NULL);
+		return (*perm = 0, NULL);
 	path = get_env_value(env, "PATH");
 	if (!path || !*path)
-		return (*err = 1, NULL);
+		return (*perm = 0, *err = 1, NULL);
 	paths = ft_split(path, ':', &s->gc);
 	i = -1;
 	while (paths[++i])
 	{
 		full_path = ft_strjoin(ft_strjoin(paths[i], "/", &s->gc), arg, &s->gc);
-    if (!access(full_path, F_OK))
-    {
-		  if (is_dir(full_path))
-			  continue;
-      if (access(full_path, X_OK))
-      {
-        *perm = 0;
-        tmp = full_path;
-        continue ;
-      }
-      return (full_path);
-    }
+		if (!access(full_path, F_OK))
+		{
+			if (is_dir(full_path))
+				continue ;
+			if (access(full_path, X_OK))
+			{
+				*perm = 0;
+				tmp = full_path;
+				continue ;
+			}
+			return (full_path);
+		}
 	}
-  return (tmp);
+	*perm = !access(full_path, F_OK);
+	return (tmp);
 }
 
 void	check_dir(t_shell *shell, t_command *cur_cmd)
@@ -96,10 +96,9 @@ void	check_dir(t_shell *shell, t_command *cur_cmd)
 void	is_not_found(t_shell *sh, t_command *cur_cmd, char **full_path)
 {
 	int	err;
-  int perm;
+	int	perm;
 
-  perm = 1;
-	err = 0;
+	(1) && (perm = 1, err = 0);
 	if (!*cur_cmd->args[0])
 	{
 		cmd_error(cur_cmd->args[0], NULL, "command not found", &sh->gc);
@@ -108,11 +107,11 @@ void	is_not_found(t_shell *sh, t_command *cur_cmd, char **full_path)
 	if (ft_strchr(cur_cmd->args[0], '/'))
 	{
 		check_dir(sh, cur_cmd);
-		*full_path = ft_strdup(cur_cmd->args[0], &sh->gc);
+		*full_path = cur_cmd->args[0];
 	}
 	else
 		*full_path = find_bin(sh, cur_cmd->args[0], sh->env, &err, &perm);
-	if ((!*full_path && !perm)|| access(*full_path, F_OK))
+	if (!*full_path && !perm)
 	{
 		if (!err)
 			cmd_error(cur_cmd->args[0], NULL, "command not found", &sh->gc);

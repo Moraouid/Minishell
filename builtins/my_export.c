@@ -6,7 +6,7 @@
 /*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 22:30:44 by zatais            #+#    #+#             */
-/*   Updated: 2025/08/12 12:39:20 by sel-abbo         ###   ########.fr       */
+/*   Updated: 2025/08/12 21:33:00 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,13 +48,16 @@ int	process_argument(t_env **env, char *arg, t_gc_node **gc)
 
 int	handle_export_args(t_env **env, char **args, t_gc_node **gc)
 {
+	int	ret;
 	int	i;
 
-  // check in cluster
+	ret = 0;
 	i = -1;
 	while (args[++i])
 		if (!process_argument(env, args[i], gc))
-			return (2);
+			++ret;
+	if (ret)
+		return (1);
 	return (0);
 }
 
