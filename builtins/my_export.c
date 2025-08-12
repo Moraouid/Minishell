@@ -12,7 +12,7 @@
 
 #include "../includes/minishell.h"
 
-void	check_argument(char **arg, char **name, t_gc_node **gc)
+void	get_var_name(char **arg, char **name, t_gc_node **gc)
 {
 	char	*eq;
 	char	*value;
@@ -30,26 +30,17 @@ void	check_argument(char **arg, char **name, t_gc_node **gc)
 		*name = *arg;
 }
 
-int	update_env_var(t_env *node, char *new_value, t_gc_node **gc)
-{
-	char	*new;
-
-	new = ft_strdup(new_value, gc);
-	node->value = new;
-	return (0);
-}
-
 int	process_argument(t_env **env, char *arg, t_gc_node **gc)
 {
 	char	*name;
 	t_env	*node;
 
-	check_argument(&arg, &name, gc);
+	get_var_name(&arg, &name, gc);
 	if (!valid_identifier(name))
 		return (cmd_error2(arg), 0);
 	node = find_env_var(*env, name);
 	if (node && ft_strchr(arg, '='))
-		update_env_var(node, arg, gc);
+    node->value = ft_strdup(arg, gc);
 	else if (!node)
 		create_new_node(env, arg, gc);
 	return (1);
@@ -57,19 +48,14 @@ int	process_argument(t_env **env, char *arg, t_gc_node **gc)
 
 int	handle_export_args(t_env **env, char **args, t_gc_node **gc)
 {
-	int	ret;
 	int	i;
 
-	ret = 0;
+  // check in cluster
 	i = -1;
 	while (args[++i])
-	{
 		if (!process_argument(env, args[i], gc))
-			ret = 2;
-		else
-			ret = 0;
-	}
-	return (ret);
+			return (2);
+	return (0);
 }
 
 int	my_export(t_env **env, char **args, t_gc_node **gc)

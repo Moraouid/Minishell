@@ -65,19 +65,13 @@ int	valid_identifier(char *name)
 int	is_full_alpha(char *val)
 {
 	int	i;
-	int	alpha_count;
 
 	i = -1;
-	alpha_count = 0;
 	if (ft_isalpha(val[0]) || val[0] == '-')
 		return (1);
 	while (val[++i])
-	{
 		if (!(val[i] >= '0' && val[i] <= '9'))
-			++alpha_count;
-	}
-	if (alpha_count)
-		return (1);
+      return (1);
 	return (0);
 }
 
