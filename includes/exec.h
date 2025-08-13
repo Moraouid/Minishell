@@ -76,7 +76,6 @@ void						cmd_error(char *cmd_name, char *error_arg,
 /*---------------------------------------------------------------------------*/
 char						*ft_strchr(char *s, int c);
 char						*generate_filename(t_shell *shell);
-int							setup_heredoc_file(char **filename, t_shell *shell);
 char						*ft_strdup(char *s, t_gc_node **gc);
 char						*get_env_value(t_env *env, char *key);
 char						**ft_split(char *s, char c, t_gc_node **gc);
@@ -84,6 +83,9 @@ char						**convert_env(t_shell *shell, t_gc_node **gc);
 char						*ft_strndup(char *s, size_t n, t_gc_node **gc);
 char						*ft_strjoin(char *s1, char *s2, t_gc_node **gc);
 char						*remove_quote_delimiter(t_gc_node **gc, char *str);
+int							setup_heredoc_file(char **filename, t_shell *shell);
+char						*find_path_helper(t_shell *s, char **paths,
+								char *arg);
 /*---------------------------------------------------------------------------*/
 t_env						*last_node(t_env *node);
 t_env						*find_env_var(t_env *env, char *name);

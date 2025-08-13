@@ -6,7 +6,7 @@
 /*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 06:29:07 by zatais            #+#    #+#             */
-/*   Updated: 2025/08/12 22:15:38 by sel-abbo         ###   ########.fr       */
+/*   Updated: 2025/08/13 12:13:09 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,4 +58,32 @@ void	child_process(t_shell *shell, t_command *cmd, int *pipes)
 		close(pipes[1]);
 	}
 	exec_child(shell, cmd);
+}
+
+char	*find_path_helper(t_shell *s, char **paths, char *arg)
+{
+	int		i;
+	char	*tmp;
+	char	*full_path;
+
+	i = -1;
+	tmp = NULL;
+	while (paths[++i])
+	{
+		full_path = ft_strjoin(ft_strjoin(paths[i], "/", &s->gc), arg, &s->gc);
+		if (!access(full_path, F_OK))
+		{
+			if (is_dir(full_path))
+				continue ;
+			if (access(full_path, X_OK))
+			{
+				s->cmd_perm = 0;
+				tmp = full_path;
+				continue ;
+			}
+			return (full_path);
+		}
+	}
+	s->cmd_perm = !access(full_path, F_OK);
+	return (tmp);
 }

@@ -6,17 +6,17 @@
 /*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/26 07:54:04 by zatais            #+#    #+#             */
-/*   Updated: 2025/08/10 21:08:21 by sel-abbo         ###   ########.fr       */
+/*   Updated: 2025/08/13 12:13:26 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
+# include <stdio.h>
 # include <errno.h>
 # include <fcntl.h>
 # include <limits.h>
-# include <stdio.h>
 # include <readline/history.h>
 # include <readline/readline.h>
 # include <signal.h>
@@ -25,8 +25,8 @@
 # include <sys/stat.h>
 # include <sys/wait.h>
 # include <unistd.h>
-# include "parse.h"
 # include "exec.h"
+# include "parse.h"
 /* ----------------enum of errno--------------- */
 typedef enum e_errno
 {
@@ -81,6 +81,7 @@ typedef struct s_env
 /* ---------------struct of token-------------- */
 typedef struct s_token
 {
+	int					f_empty;
 	char				*value;
 	t_token_type		type;
 	struct s_token		*next;
@@ -115,6 +116,7 @@ typedef struct s_gc_node
 typedef struct s_shell
 {
 	int					stdin_fd;
+	int					cmd_perm;
 	int					stdout_fd;
 	int					herdoc_fd;
 	int					last_exit_status;

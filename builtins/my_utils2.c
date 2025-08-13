@@ -6,7 +6,7 @@
 /*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 06:17:02 by zatais            #+#    #+#             */
-/*   Updated: 2025/08/12 12:40:33 by sel-abbo         ###   ########.fr       */
+/*   Updated: 2025/08/13 12:12:52 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ int	is_full_alpha(char *val)
 		return (1);
 	while (val[++i])
 		if (!(val[i] >= '0' && val[i] <= '9'))
-      return (1);
+			return (1);
 	return (0);
 }
 

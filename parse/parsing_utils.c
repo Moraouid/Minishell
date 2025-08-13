@@ -6,7 +6,7 @@
 /*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/24 04:53:27 by sel-abbo          #+#    #+#             */
-/*   Updated: 2025/08/11 17:01:43 by sel-abbo         ###   ########.fr       */
+/*   Updated: 2025/08/13 12:13:34 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ t_token	*creat_node_cmd(t_shell *shell, char *value, int type)
 	t_token	*t_cmd;
 
 	t_cmd = gc_malloc(&shell->gc, sizeof(t_token));
+	t_cmd->f_empty = 0;
 	t_cmd->value = value;
 	t_cmd->type = type;
 	t_cmd->next = NULL;

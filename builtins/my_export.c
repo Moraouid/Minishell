@@ -6,7 +6,7 @@
 /*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 22:30:44 by zatais            #+#    #+#             */
-/*   Updated: 2025/08/12 21:33:00 by sel-abbo         ###   ########.fr       */
+/*   Updated: 2025/08/13 12:12:42 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ int	process_argument(t_env **env, char *arg, t_gc_node **gc)
 		return (cmd_error2(arg), 0);
 	node = find_env_var(*env, name);
 	if (node && ft_strchr(arg, '='))
-    node->value = ft_strdup(arg, gc);
+		node->value = ft_strdup(arg, gc);
 	else if (!node)
 		create_new_node(env, arg, gc);
 	return (1);

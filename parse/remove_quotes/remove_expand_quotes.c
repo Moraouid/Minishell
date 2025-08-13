@@ -6,7 +6,7 @@
 /*   By: sel-abbo <sel-abbo@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 11:27:35 by sel-abbo          #+#    #+#             */
-/*   Updated: 2025/08/03 17:08:36 by sel-abbo         ###   ########.fr       */
+/*   Updated: 2025/08/13 12:13:40 by sel-abbo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,13 +58,20 @@ char	*remove_rstr_from_value(char *str, char *r_str, t_gc_node **gc)
 
 void	remove_expand_quotes(t_token *tokens, char *r_str, t_gc_node **gc)
 {
+	char	*res;
 	t_token	*current;
 
 	current = tokens;
 	while (current)
 	{
 		if (ft_strlen(current->value) != 0)
-			current->value = remove_rstr_from_value(current->value, r_str, gc);
+		{
+			res = remove_rstr_from_value(current->value, r_str, gc);
+			if (!res && current->f_empty)
+				current->value = ft_strdup("", gc);
+			else
+				current->value = res;
+		}
 		current = current->next;
 	}
 }

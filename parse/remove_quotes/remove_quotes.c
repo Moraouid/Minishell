@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+#include <readline/readline.h>
 
 void	handle_len_char(t_quotes *flag, char *value, char *r_str)
 {
@@ -78,6 +79,19 @@ char	*remove_quotes_helper(t_shell *shell, char *value, t_quotes *flag,
 	return (res);
 }
 
+int	check_empty(char *value, char *r_str, t_gc_node **gc)
+{
+	char	*res;
+
+	res = ft_strdup("\"", gc);
+	res = ft_strjoin(res, r_str, gc);
+	res = ft_strjoin(res, r_str, gc);
+	res = ft_strjoin(res, "\"", gc);
+	if (!strcmp(value, res))
+		return (1);
+	return (0);
+}
+
 void	remove_quotes(t_shell *shell)
 {
 	char		*value;
@@ -95,6 +109,8 @@ void	remove_quotes(t_shell *shell)
 				shell->r_str);
 		value = remove_quotes_helper(shell, current->value, flag, shell->r_str);
 		value[flag->j] = '\0';
+		if (check_empty(current->value, shell->r_str, &shell->gc))
+			current->f_empty = 1;
 		current->value = value;
 		current = current->next;
 	}
