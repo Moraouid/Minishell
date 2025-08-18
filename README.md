@@ -262,5 +262,5 @@ No license file is provided. All rights reserved by the repository owner unless 
 
 ## Credits
 
-- Author: @Moraouid
+- Author: @Moraouid @maskface02
 - Inspired by the 42 “Minishell” project specification
