@@ -62,7 +62,7 @@ Minishell brings all of these “handling” responsibilities together so comman
 ## Quick start
 
 Prerequisites:
-- A C compiler (gcc or clang)
+- A C compiler (gcc or cc)
 - make
 - GNU Readline development headers and library
 
