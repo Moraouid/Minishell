@@ -36,7 +36,7 @@ When we say “handling,” we mean how the shell accepts, interprets, transform
 - Resource handling: tracking and freeing all allocated resources to avoid leaks.
 
 Minishell brings all of these “handling” responsibilities together so commands behave closely to what users expect from a real shell.
-
+ 
 ---
 
 ## Features
