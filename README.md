@@ -91,7 +91,7 @@ Note:
 - Run ./minishell to enter the interactive shell.
 - Type commands as in a typical shell:
   - External: ls -la
-  - Pipelines: ls -la | grep '^d'
+  - Pipelines: ls -la | grep 'd'
   - Redirections: grep main < src/file.c > out.txt
   - Append redirection: echo hello >> out.txt
   - Heredoc:
